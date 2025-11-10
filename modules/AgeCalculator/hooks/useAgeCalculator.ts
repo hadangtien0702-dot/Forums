@@ -22,11 +22,6 @@ export const useAgeCalculator = () => {
     }
   }, []);
 
-  const saveLogs = useCallback((newLogs: LogEntry[]) => {
-    setLogs(newLogs);
-    localStorage.setItem('ageCalculatorLogs', JSON.stringify(newLogs));
-  }, []);
-
   const handleCalculate = useCallback(() => {
     setError(null);
     setResult(null);
@@ -96,9 +91,11 @@ export const useAgeCalculator = () => {
 
   const handleClearLogs = useCallback(() => {
     if (window.confirm('Are you sure you want to clear the entire history?')) {
-      saveLogs([]);
+      const newLogs: LogEntry[] = [];
+      setLogs(newLogs);
+      localStorage.setItem('ageCalculatorLogs', JSON.stringify(newLogs));
     }
-  }, [saveLogs]);
+  }, []);
 
   return {
     dob,
