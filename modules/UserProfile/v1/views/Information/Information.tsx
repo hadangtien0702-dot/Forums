@@ -1,6 +1,6 @@
 import React from 'react';
 import type { InformationSectionProps } from './Information.types';
-import Spinner from '../../../../shared/ui/Spinner';
+import Spinner from '../../../../../shared/ui/Spinner';
 
 const InformationSection: React.FC<InformationSectionProps> = ({
   details,

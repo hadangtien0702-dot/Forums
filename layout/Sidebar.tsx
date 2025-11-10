@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, isOpen, onCl
         <aside className={`
             fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-30
             transform transition-transform duration-300 ease-in-out
-            lg:relative lg:w-60 lg:translate-x-0 lg:flex-shrink-0
+            lg:relative lg:w-72 lg:translate-x-0 lg:flex-shrink-0
             ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
             <div className="flex flex-col h-full">
