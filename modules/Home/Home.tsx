@@ -35,10 +35,12 @@ const HomePage: React.FC<HomePageProps> = ({ layout, setLayout }) => {
     </div>
   );
 
+  const isFullWidthLayout = layout === 'v1' || layout === 'v2' || layout === 'v3';
+
   return (
-    <div>
-      {/* Page header is hidden for the new V1 and V2 layouts */}
-      {layout !== 'v1' && layout !== 'v2' && (
+    <div className={isFullWidthLayout ? 'h-full' : ''}>
+      {/* Page header is hidden for all full-width layouts */}
+      {!isFullWidthLayout && (
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-800">Welcome to Forums</h1>
           <p className="mt-2 text-slate-600">
@@ -48,8 +50,8 @@ const HomePage: React.FC<HomePageProps> = ({ layout, setLayout }) => {
       )}
 
       {/* The layout switcher is moved inside a container for non-full-width layouts for better padding */}
-      <div className={layout === 'v1' || layout === 'v2' ? '' : 'mb-6'}>
-          <div className={layout === 'v1' || layout === 'v2' ? 'p-4 sm:p-6 lg:p-8' : ''}>
+      <div className={isFullWidthLayout ? '' : 'mb-6'}>
+          <div className={isFullWidthLayout ? 'p-4 sm:p-6 lg:p-8' : ''}>
              <div className="flex items-center flex-wrap gap-2 border-b border-slate-200 pb-4">
                 <span className="text-sm font-medium text-slate-600 mr-2">Dashboard Layout:</span>
                 <LayoutButton label="Version 1" isActive={layout === 'v1'} onClick={() => setLayout('v1')} />

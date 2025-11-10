@@ -18,7 +18,7 @@ const App: React.FC = () => {
   }, []);
   
   // Check if the current view is a full-width Home layout
-  const isFullWidthHome = currentPage === 'home' && (homeLayout === 'v1' || homeLayout === 'v2');
+  const isFullWidthHome = currentPage === 'home' && (homeLayout === 'v1' || homeLayout === 'v2' || homeLayout === 'v3');
 
   const SuspenseFallback: React.FC = () => (
     <div className="flex-1 flex items-center justify-center p-8">
@@ -57,9 +57,9 @@ const App: React.FC = () => {
             </div>
         </header>
         {/* Main content area: padding is removed for the full-width Home layouts */}
-        <main className={`flex-1 flex flex-col ${isFullWidthHome ? 'bg-white' : 'p-4 sm:p-6 lg:p-8'}`}>
+        <main className={`flex-1 flex flex-col ${isFullWidthHome ? '' : 'p-4 sm:p-6 lg:p-8'}`}>
              {/* Container: removed for the full-width Home layouts */}
-            <div className={isFullWidthHome ? '' : 'max-w-7xl mx-auto w-full'}>
+            <div className={isFullWidthHome ? 'h-full' : 'max-w-7xl mx-auto w-full'}>
                 <Suspense fallback={<SuspenseFallback />}>
                   {currentPage === 'home' && <HomePage layout={homeLayout} setLayout={setHomeLayout} />}
                   {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
