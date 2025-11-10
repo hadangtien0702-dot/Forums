@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+// FIX: Import React to resolve 'Cannot find namespace React' error.
+import React, { useState, useEffect, useCallback } from 'react';
 import type { LogEntry, CalculationResult } from '../AgeCalculator.types';
 import { calculateAgeLogic } from '../utils/ageCalculator';
 import { MAX_LOG_ENTRIES } from '../AgeCalculator.constants';
@@ -31,20 +32,20 @@ export const useAgeCalculator = () => {
     setResult(null);
 
     if (!dob) {
-      setError("Please enter the client's date of birth!");
+      setError("Please enter the client's date of birth.");
       return;
     }
 
     const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
     if (!dateRegex.test(dob)) {
-      setError('Please use the correct MM/DD/YYYY format!');
+      setError('Please use the correct MM/DD/YYYY format.');
       return;
     }
 
     const [month, day, year] = dob.split('/').map(Number);
     const testDate = new Date(year, month - 1, day);
     if (testDate.getFullYear() !== year || testDate.getMonth() !== month - 1 || testDate.getDate() !== day) {
-      setError('Invalid date of birth!');
+      setError('The date of birth is invalid.');
       return;
     }
 

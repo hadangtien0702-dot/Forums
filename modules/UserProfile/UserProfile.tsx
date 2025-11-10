@@ -5,13 +5,13 @@ import NavItem from './components/NavItem';
 import type { UserDetail } from './UserProfile.types';
 
 const initialUser = {
-  name: 'Alex Doe',
+  name: 'Kinn',
   role: 'Admin',
   avatar: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
   details: [
     {
       label: 'Full Name',
-      value: 'Alex Doe',
+      value: 'Kinn',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -22,7 +22,7 @@ const initialUser = {
     },
     {
       label: 'Email',
-      value: 'alex.doe@example.com',
+      value: 'Kinn@gmail.com',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25-2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
@@ -107,7 +107,7 @@ const UserProfilePage: React.FC = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Left Sidebar */}
-      <aside className="lg:col-span-4 xl:col-span-3">
+      <aside className="lg:col-span-3 xl:col-span-2">
         <div className="bg-white rounded-xl shadow-lg shadow-slate-200/80 p-6 text-center">
           <img
             src={user.avatar}
@@ -118,7 +118,7 @@ const UserProfilePage: React.FC = () => {
           <div className="mt-2">
             <span className="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-medium px-2.5 py-1 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 18.5a11.954 11.954 0 007.834-13.501 1.5 1.5 0 00-1.423-2.455 1.5 1.5 0 00-1.043.533A9.957 9.957 0 0110 15.5a9.957 9.957 0 01-6.367-3.001 1.5 1.5 0 00-1.467 2.5z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
               {user.role}
             </span>
@@ -150,11 +150,22 @@ const UserProfilePage: React.FC = () => {
               }
             />
           </ul>
+          <div className="mt-4 pt-4 border-t border-slate-200">
+            <button
+                onClick={() => alert('Log-out functionality is not yet implemented.')}
+                className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 transition-all duration-200 text-left"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Log-out</span>
+            </button>
+          </div>
         </nav>
       </aside>
 
       {/* Right Content */}
-      <main className="lg:col-span-8 xl:col-span-9">
+      <main className="lg:col-span-9 xl:col-span-10">
         <div className="bg-white rounded-xl shadow-lg shadow-slate-200/80 p-6 sm:p-8">
           {activeTab === 'information' && (
              <InformationSection

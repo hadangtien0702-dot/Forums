@@ -1,20 +1,56 @@
 import React, { useState } from 'react';
 import Sidebar from './layout/Sidebar';
+import HomePage from './modules/Home';
 import AgeCalculatorPage from './modules/AgeCalculator';
 import UserProfilePage from './modules/UserProfile';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState('ageCalculator');
+  const [currentPage, setCurrentPage] = useState('home');
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page);
+    setSidebarOpen(false); // Close sidebar on navigation
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
-      <main className="flex-1 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
-          {currentPage === 'userProfile' && <UserProfilePage />}
-        </div>
-      </main>
+      <Sidebar
+        currentPage={currentPage}
+        onNavigate={handleNavigate}
+        isOpen={isSidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+      <div className="flex-1 flex flex-col">
+        {/* Header for mobile with hamburger */}
+        <header className="lg:hidden sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10 border-b border-slate-200">
+            <div className="flex items-center justify-between p-3">
+                 <div className="flex items-center gap-2 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h6l2-2h2l-2 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 16H5a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v1" />
+                    </svg>
+                   <span className="font-bold text-lg text-slate-800">Forums</span>
+                </div>
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="p-2 rounded-md text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                  aria-label="Open sidebar"
+                >
+                  <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+            </div>
+        </header>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+            <div className="max-w-7xl mx-auto">
+                {currentPage === 'home' && <HomePage />}
+                {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
+                {currentPage === 'userProfile' && <UserProfilePage />}
+            </div>
+        </main>
+      </div>
     </div>
   );
 };

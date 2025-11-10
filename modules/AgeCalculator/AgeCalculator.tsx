@@ -3,6 +3,7 @@ import { useAgeCalculator } from './hooks/useAgeCalculator';
 import AgeCalculatorForm from './components/AgeCalculatorForm';
 import ResultDisplay from './components/ResultDisplay';
 import LogTable from './components/LogTable';
+import Spinner from '../../shared/ui/Spinner';
 
 const AgeCalculatorPage: React.FC = () => {
   const {
@@ -17,31 +18,38 @@ const AgeCalculatorPage: React.FC = () => {
   } = useAgeCalculator();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-      
-      {/* Left Column: Calculator */}
-      <div className="lg:col-span-2">
-        <div className="bg-white rounded-xl shadow-lg shadow-slate-200/80 p-6 sm:p-8">
-          <AgeCalculatorForm
-            dob={dob}
-            isLoading={isLoading}
-            onDobChange={handleDobChange}
-            onCalculate={handleCalculate}
-          />
-          
-          {error && (
-             <div className="mt-6 p-4 text-center bg-red-50 text-red-700 font-medium rounded-lg border border-red-200">{error}</div>
-          )}
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        {/* Left Card: Calculator and Results */}
+        <div className="xl:col-span-7">
+            <div className="bg-white rounded-xl shadow-lg shadow-slate-200/80 p-6 sm:p-8">
+                <AgeCalculatorForm
+                    dob={dob}
+                    isLoading={isLoading}
+                    onDobChange={handleDobChange}
+                    onCalculate={handleCalculate}
+                />
 
-          {result && !isLoading && <ResultDisplay result={result} dob={dob} />}
+                <div className="mt-8">
+                    {error && (
+                        <div className="p-4 text-center bg-red-50 text-red-700 font-medium rounded-lg border border-red-200">{error}</div>
+                    )}
+                    
+                    {isLoading && (
+                        <div className="flex flex-col items-center justify-center text-center text-slate-500 py-8">
+                            <Spinner />
+                            <p className="mt-2 font-medium">Calculating age...</p>
+                        </div>
+                    )}
+                    
+                    {result && !isLoading && <ResultDisplay result={result} />}
+                </div>
+            </div>
         </div>
-      </div>
 
-      {/* Right Column: Logs */}
-      <div className="lg:col-span-1">
-        <LogTable logs={logs} onClear={handleClearLogs} />
-      </div>
-
+        {/* Right Card: History */}
+        <div className="xl:col-span-5">
+            <LogTable logs={logs} onClear={handleClearLogs} />
+        </div>
     </div>
   );
 };
