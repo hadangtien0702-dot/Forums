@@ -6,9 +6,9 @@ interface ResultDisplayProps {
 }
 
 const ResultItem: React.FC<{ label: string; value: string | number; valueClasses?: string }> = ({ label, value, valueClasses = '' }) => (
-  <div className="flex justify-between items-center py-4">
+  <div className="flex justify-between items-baseline py-4">
     <span className="text-slate-600">{label}</span>
-    <span className={`font-bold text-slate-800 ${valueClasses}`}>{value}</span>
+    <span className={`font-bold text-slate-800 text-xl ${valueClasses}`}>{value}</span>
   </div>
 );
 
@@ -20,7 +20,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
       <h2 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-4 mb-2">Calculation Result</h2>
       <div className="divide-y divide-slate-100">
         <ResultItem label="Actual Age" value={result.actualAge} />
-        <ResultItem label="Insurance Age" value={result.insuranceAge} valueClasses="text-2xl text-blue-600" />
+        <ResultItem label="Insurance Age" value={result.insuranceAge} valueClasses="text-blue-600" />
         <ResultItem label="Next Age-Up Date" value={result.nextAgeDate} />
       </div>
       <div className={`mt-6 p-4 rounded-lg text-center ${isUrgent ? 'bg-red-50' : 'bg-green-50'}`}>

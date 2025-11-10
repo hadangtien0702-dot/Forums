@@ -17,7 +17,7 @@ const AgeCalculatorForm: React.FC<AgeCalculatorFormProps> = ({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-800">Insurance Age Calculator</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Insurance Age Calculator</h1>
         <p className="mt-2 text-slate-600">
           Enter the client's date of birth to calculate their actual and insurance-applicable age.
         </p>

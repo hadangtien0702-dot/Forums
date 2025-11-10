@@ -3,7 +3,7 @@ import React from 'react';
 const HomePage: React.FC = () => {
   return (
     <div className="bg-white rounded-xl shadow-lg shadow-slate-200/80 p-6 sm:p-8">
-      <h1 className="text-3xl font-bold text-slate-800">Welcome to Forums</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Welcome to Forums</h1>
       <p className="mt-2 text-slate-600">
         This is your dashboard. Please select a tool from the sidebar to get started.
       </p>

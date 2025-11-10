@@ -114,7 +114,7 @@ const UserProfilePage: React.FC = () => {
             alt="User Avatar"
             className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-slate-100 object-cover"
           />
-          <h2 className="text-2xl font-bold text-slate-800">{user.name}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800">{user.name}</h2>
           <div className="mt-2">
             <span className="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-medium px-2.5 py-1 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
