@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import NavItem from './components/NavItem';
 import InformationSection from './views/Information';
 import SettingsSection from './views/Settings';
@@ -58,14 +58,39 @@ const adaptUserToV1Details = (user: any): UserDetail[] => [
   },
 ];
 
+interface UserProfileV1Props {
+  user: any;
+  tempUser: any;
+  isEditing: boolean;
+  isSaving: boolean;
+  showSuccess: boolean;
+  onEdit: () => void;
+  onCancel: () => void;
+  onSave: () => void;
+  onInputChange: (section: 'personalInfo' | 'address', key: string, value: string) => void;
+  onProfileCardChange: (key: 'name' | 'role' | 'location', value: string) => void;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
 
-const UserProfileV1 = (props: any) => {
-  const { user, tempUser, activeTab, setActiveTab, onInputChange, onEdit, isEditing } = props;
 
-  const detailsForDisplay = adaptUserToV1Details(props.isEditing ? tempUser : user);
+const UserProfileV1: React.FC<UserProfileV1Props> = ({ 
+    user, 
+    tempUser, 
+    isEditing, 
+    isSaving,
+    showSuccess,
+    onEdit,
+    onCancel,
+    onSave,
+    onInputChange,
+    activeTab, 
+    setActiveTab 
+}) => {
+  const detailsForDisplay = adaptUserToV1Details(isEditing ? tempUser : user);
 
   // Adapter to map V1's flat key-value change to V2's structured change
-  const handleV1InputChange = (key: string, value: string) => {
+  const handleV1InputChange = useCallback((key: string, value: string) => {
     if (key === 'name') {
       const [firstName, ...lastNameParts] = value.split(' ');
       onInputChange('personalInfo', 'firstName', firstName || '');
@@ -73,7 +98,7 @@ const UserProfileV1 = (props: any) => {
     } else if (key === 'email') {
       onInputChange('personalInfo', 'email', value);
     }
-  };
+  }, [onInputChange]);
   
   const pageInfo = {
     information: {
@@ -152,8 +177,14 @@ const UserProfileV1 = (props: any) => {
             <div className="p-6">
               {activeTab === 'information' && (
                  <InformationSection
-                    {...props}
                     details={detailsForDisplay}
+                    isEditing={isEditing}
+                    isSaving={isSaving}
+                    showSuccess={showSuccess}
+                    // FIX: Pass the onEdit prop to satisfy the InformationSectionProps interface.
+                    onEdit={onEdit}
+                    onCancel={onCancel}
+                    onSave={onSave}
                     onInputChange={handleV1InputChange}
                 />
               )}
@@ -165,4 +196,4 @@ const UserProfileV1 = (props: any) => {
   );
 };
 
-export default UserProfileV1;
+export default memo(UserProfileV1);

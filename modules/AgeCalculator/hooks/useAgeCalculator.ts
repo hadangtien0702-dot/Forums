@@ -22,10 +22,10 @@ export const useAgeCalculator = () => {
     }
   }, []);
 
-  const saveLogs = (newLogs: LogEntry[]) => {
+  const saveLogs = useCallback((newLogs: LogEntry[]) => {
     setLogs(newLogs);
     localStorage.setItem('ageCalculatorLogs', JSON.stringify(newLogs));
-  };
+  }, []);
 
   const handleCalculate = useCallback(() => {
     setError(null);
@@ -51,31 +51,33 @@ export const useAgeCalculator = () => {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      try {
-        const calculatedResult = calculateAgeLogic(dob);
-        setResult(calculatedResult);
+    try {
+      const calculatedResult = calculateAgeLogic(dob);
+      setResult(calculatedResult);
 
-        const newLog: LogEntry = {
-          timestamp: new Date().toISOString(),
-          dob: dob,
-          actualAge: calculatedResult.actualAge,
-          insuranceAge: calculatedResult.insuranceAge,
-          nextAgeDate: calculatedResult.nextAgeDate,
-        };
+      const newLog: LogEntry = {
+        timestamp: new Date().toISOString(),
+        dob: dob,
+        actualAge: calculatedResult.actualAge,
+        insuranceAge: calculatedResult.insuranceAge,
+        nextAgeDate: calculatedResult.nextAgeDate,
+      };
 
-        const updatedLogs = [newLog, ...logs].slice(0, MAX_LOG_ENTRIES);
-        saveLogs(updatedLogs);
+      // Use a functional update for logs to ensure we have the latest state
+      setLogs(prevLogs => {
+          const updatedLogs = [newLog, ...prevLogs].slice(0, MAX_LOG_ENTRIES);
+          localStorage.setItem('ageCalculatorLogs', JSON.stringify(updatedLogs));
+          return updatedLogs;
+      });
 
-      } catch (e) {
-        setError("An error occurred during calculation.");
-      } finally {
-        setIsLoading(false);
-      }
-    }, 800);
-  }, [dob, logs]);
+    } catch (e) {
+      setError("An error occurred during calculation.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [dob]);
 
-  const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDobChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
     let formatted = '';
 
@@ -90,13 +92,13 @@ export const useAgeCalculator = () => {
       formatted = value;
     }
     setDob(formatted);
-  };
+  }, []);
 
-  const handleClearLogs = () => {
+  const handleClearLogs = useCallback(() => {
     if (window.confirm('Are you sure you want to clear the entire history?')) {
       saveLogs([]);
     }
-  };
+  }, [saveLogs]);
 
   return {
     dob,

@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, Suspense, lazy } from 'react';
 import Sidebar from './layout/Sidebar';
-import HomePage from './modules/Home';
-import AgeCalculatorPage from './modules/AgeCalculator';
-import UserProfilePage from './modules/UserProfile';
+import Spinner from './shared/ui/Spinner';
+
+// Lazy load page components for code splitting
+const HomePage = lazy(() => import('./modules/Home'));
+const AgeCalculatorPage = lazy(() => import('./modules/AgeCalculator'));
+const UserProfilePage = lazy(() => import('./modules/UserProfile'));
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
+  const [homeLayout, setHomeLayout] = useState('v1'); // State for home layout
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleNavigate = (page: string) => {
+  const handleNavigate = useCallback((page: string) => {
     setCurrentPage(page);
     setSidebarOpen(false); // Close sidebar on navigation
-  };
+  }, []);
+  
+  // Check if the current view is a full-width Home layout
+  const isFullWidthHome = currentPage === 'home' && (homeLayout === 'v1' || homeLayout === 'v2');
+
+  const SuspenseFallback: React.FC = () => (
+    <div className="flex-1 flex items-center justify-center p-8">
+      <Spinner />
+    </div>
+  );
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -43,11 +56,15 @@ const App: React.FC = () => {
                 </button>
             </div>
         </header>
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-            <div className="max-w-7xl mx-auto">
-                {currentPage === 'home' && <HomePage />}
-                {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
-                {currentPage === 'userProfile' && <UserProfilePage />}
+        {/* Main content area: padding is removed for the full-width Home layouts */}
+        <main className={`flex-1 flex flex-col ${isFullWidthHome ? 'bg-white' : 'p-4 sm:p-6 lg:p-8'}`}>
+             {/* Container: removed for the full-width Home layouts */}
+            <div className={isFullWidthHome ? '' : 'max-w-7xl mx-auto w-full'}>
+                <Suspense fallback={<SuspenseFallback />}>
+                  {currentPage === 'home' && <HomePage layout={homeLayout} setLayout={setHomeLayout} />}
+                  {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
+                  {currentPage === 'userProfile' && <UserProfilePage />}
+                </Suspense>
             </div>
         </main>
       </div>

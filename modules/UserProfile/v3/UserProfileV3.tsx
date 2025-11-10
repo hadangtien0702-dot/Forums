@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Spinner from '../../../../shared/ui/Spinner';
 
 const FormInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => (
@@ -34,9 +34,19 @@ const ColumnCard: React.FC<{ title: string; icon: React.ReactNode; children: Rea
     </div>
 );
 
+interface UserProfileV3Props {
+    user: any;
+    tempUser: any;
+    isEditing: boolean;
+    isSaving: boolean;
+    showSuccess: boolean;
+    onEdit: () => void;
+    onCancel: () => void;
+    onSave: () => void;
+    onInputChange: (section: 'personalInfo' | 'address', key: string, value: string) => void;
+}
 
-const UserProfileV3 = (props: any) => {
-    const { user, tempUser, isEditing, isSaving, showSuccess, onEdit, onCancel, onSave, onInputChange } = props;
+const UserProfileV3: React.FC<UserProfileV3Props> = ({ user, tempUser, isEditing, isSaving, showSuccess, onEdit, onCancel, onSave, onInputChange }) => {
     const data = isEditing ? tempUser : user;
 
     return (
@@ -142,4 +152,4 @@ const UserProfileV3 = (props: any) => {
     );
 };
 
-export default UserProfileV3;
+export default memo(UserProfileV3);
