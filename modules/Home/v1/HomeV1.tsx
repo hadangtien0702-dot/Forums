@@ -1,214 +1,226 @@
-import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 
-// Data for the product cards in the carousel
-const CARDS_DATA = [
-  {
-    title: 'Phone',
-    imageUrl: 'https://images.unsplash.com/photo-1598550463109-a5b82a022137?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    title: 'Whiteboard',
-    imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    title: 'Webinars',
-    imageUrl: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    title: 'Docs',
-    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    title: 'Contact Center',
-    imageUrl: 'https://images.unsplash.com/photo-1556740772-1a741367b93e?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    title: 'Team Chat',
-    imageUrl: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=800&auto=format&fit=crop',
-  }
-];
+// --- Reusable UI Components ---
 
-// Reusable component for the product cards
-const ProductCard: React.FC<{ card: typeof CARDS_DATA[0] & { icon: React.ReactNode } }> = ({ card }) => (
-    <div className="flex-shrink-0 w-[280px] sm:w-[320px] aspect-[3/4] rounded-2xl overflow-hidden relative shadow-2xl shadow-blue-900/30 transform hover:scale-105 transition-transform duration-300">
-        <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-        <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/30 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-semibold">
-            {card.icon}
-            <span>{card.title}</span>
-        </div>
-    </div>
+const Card: React.FC<{ children: React.ReactNode; className?: string; }> = ({ children, className = '' }) => (
+  <div className={`bg-white rounded-xl shadow-md shadow-slate-200/60 border border-slate-200/80 ${className}`}>
+    {children}
+  </div>
 );
 
-// Main component for the new HomeV1 layout
-const HomeV1: React.FC = () => {
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [canScrollLeft, setCanScrollLeft] = useState(false);
-    const [canScrollRight, setCanScrollRight] = useState(true);
+const CardHeader: React.FC<{ title: string; icon: React.ReactNode; action?: React.ReactNode; }> = ({ title, icon, action }) => (
+  <div className="flex justify-between items-center p-5 border-b border-slate-100">
+    <div className="flex items-center gap-3">
+      <span className="text-blue-600">{icon}</span>
+      <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+    </div>
+    {action}
+  </div>
+);
 
-    const handleScrollUpdate = useCallback(() => {
-        const el = scrollContainerRef.current;
-        if (el) {
-            const scrollLeft = el.scrollLeft;
-            const scrollWidth = el.scrollWidth;
-            const clientWidth = el.clientWidth;
-            
-            // Check scrollability
-            setCanScrollLeft(scrollLeft > 0);
-            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1); // -1 for precision
-            
-            // Update active index
-            const cardWidth = el.children[0]?.clientWidth || 0;
-            const gap = 24;
-            const itemWidth = cardWidth + gap;
-            const newIndex = Math.round(scrollLeft / itemWidth);
-            setActiveIndex(newIndex);
-        }
-    }, []);
+// --- New Dashboard Sections ---
 
-    useEffect(() => {
-        const el = scrollContainerRef.current;
-        el?.addEventListener('scroll', handleScrollUpdate);
-        // Initial check
-        handleScrollUpdate();
-        return () => el?.removeEventListener('scroll', handleScrollUpdate);
-    }, [handleScrollUpdate]);
+// 1. Quick Stats
+const QuickStats: React.FC = () => {
+  const stats = [
+    { value: '1,204', label: 'Active Members', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.122-1.28-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.122-1.28.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg> },
+    { value: '82', label: 'New Posts Today', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> },
+    { value: '29', label: 'Open Topics', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> },
+  ];
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {stats.map(stat => (
+        <Card key={stat.label}>
+          <div className="flex items-center p-5">
+            <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-blue-100 text-blue-600 rounded-lg">
+              {stat.icon}
+            </div>
+            <div className="ml-4">
+              <p className="text-2xl font-bold text-slate-800">{stat.value}</p>
+              <p className="text-sm font-medium text-slate-500">{stat.label}</p>
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+};
 
-    const handleNavClick = (direction: 'left' | 'right') => {
-        if (scrollContainerRef.current) {
-            const cardWidth = scrollContainerRef.current.children[0]?.clientWidth || 0;
-            const gap = 24; // Corresponds to gap-6
-            const scrollAmount = cardWidth + gap;
-            scrollContainerRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth',
-            });
-        }
+// 2. Member Spotlight
+const MemberSpotlight: React.FC = () => {
+    const member = {
+        name: 'Elena Rodriguez',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        role: 'Community Moderator',
+        bio: '"Passionate about creating helpful and inclusive online spaces. Always here to help answer your questions!"'
     };
+    return (
+        <Card className="flex flex-col">
+            <CardHeader title="Member of the Week" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" clipRule="evenodd" /></svg>} />
+            <div className="p-5 text-center flex-1 flex flex-col items-center justify-center">
+                <img src={member.avatar} alt={member.name} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-slate-100" />
+                <h4 className="font-bold text-slate-800 text-lg">{member.name}</h4>
+                <p className="text-sm text-blue-600 font-semibold">{member.role}</p>
+                <p className="text-sm text-slate-500 mt-3 italic">{member.bio}</p>
+            </div>
+            <div className="p-5 mt-auto">
+                 <button className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
+                    View Profile
+                </button>
+            </div>
+        </Card>
+    );
+};
 
-    const scrollToIndex = (index: number) => {
-         if (scrollContainerRef.current) {
-            const cardWidth = scrollContainerRef.current.children[0]?.clientWidth || 0;
-            const gap = 24;
-            const scrollPosition = (cardWidth + gap) * index;
-            scrollContainerRef.current.scrollTo({
-                left: scrollPosition,
-                behavior: 'smooth',
-            });
-        }
-    };
-    
-    // Using useMemo to prevent re-creating icons on every render
-    const cardIcons = useMemo(() => ({
-        Phone: (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-        ),
-        Whiteboard: (
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-        ),
-        Webinars: (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-            </svg>
-        ),
-        Docs: (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-        ),
-        'Contact Center': (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-        ),
-        'Team Chat': (
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-        ),
+// 3. Live Activity Feed
+const LiveActivityFeed: React.FC = () => {
+  const activities = [
+    { user: 'Kenji Tanaka', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80', action: 'commented on', topic: 'Best practices for REST API design', time: '2m ago' },
+    { user: 'Samantha Lee', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80', action: 'started a new topic:', topic: 'Showcase: Your latest side project', time: '15m ago' },
+    { user: 'David Chen', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80', action: 'liked a post in', topic: 'Weekly watercooler thread', time: '28m ago' },
+    { user: 'Maria Garcia', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80', action: 'asked a question in', topic: 'Help: CSS Flexbox issue', time: '45m ago' },
+  ];
+  return (
+    <Card>
+      <CardHeader title="Live Activity" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>} action={<a href="#" className="text-sm font-semibold text-blue-600 hover:underline">View all</a>} />
+      <div className="p-5 space-y-4">
+        {activities.map((item, index) => (
+          <div key={index} className="flex items-start gap-3">
+            <img src={item.avatar} alt={item.user} className="w-10 h-10 rounded-full flex-shrink-0" />
+            <div className="text-sm">
+              <p className="text-slate-600">
+                <span className="font-bold text-slate-800">{item.user}</span> {item.action} <a href="#" className="font-semibold text-blue-600 hover:underline">{item.topic}</a>
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">{item.time}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+};
+
+// 4. Daily Poll
+const InteractivePoll: React.FC = () => {
+    const poll = useMemo(() => ({
+        question: "What's your favorite frontend framework for new projects?",
+        options: [
+            { id: 'react', label: 'React', votes: 142 },
+            { id: 'vue', label: 'Vue.js', votes: 68 },
+            { id: 'svelte', label: 'Svelte', votes: 45 },
+            { id: 'other', label: 'Something else', votes: 12 },
+        ]
     }), []);
 
-    const cardsWithIcons = useMemo(() => CARDS_DATA.map(card => ({...card, icon: cardIcons[card.title as keyof typeof cardIcons]})), [cardIcons]);
+    const [voted, setVoted] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+    const totalVotes = poll.options.reduce((sum, option) => sum + option.votes, 0);
+
+    const handleVote = () => {
+        if (selectedOption) {
+            setVoted(true);
+        }
+    };
 
     return (
-        <div>
-            {/* Hero Section */}
-            <div className="bg-gradient-to-br from-[#1E2A7A] to-[#0A103D] text-white text-center py-20 sm:py-28 px-4">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold max-w-4xl mx-auto leading-tight">
-                    Find out what's possible when work connects
-                </h1>
-                <p className="mt-6 text-lg text-blue-200 max-w-2xl mx-auto">
-                    Whether you're chatting with teammates or supporting customers, our platform makes it easier to connect, collaborate, and reach goals.
-                </p>
-                <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
-                    <button className="w-full sm:w-auto px-8 py-3 bg-slate-900 text-white rounded-full text-base font-semibold transition-all hover:bg-slate-800 active:scale-[0.98]">
-                        Explore products
-                    </button>
-                    <button className="w-full sm:w-auto px-8 py-3 bg-white text-slate-900 rounded-full text-base font-semibold transition-all hover:bg-slate-200 active:scale-[0.98]">
-                        Find your plan
-                    </button>
+        <Card>
+            <CardHeader title="Daily Poll" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>} />
+            <div className="p-5">
+                <p className="font-semibold text-slate-800 mb-4">{poll.question}</p>
+                <div className="space-y-3">
+                    {poll.options.map(option => {
+                        const percentage = voted ? Math.round((option.votes / totalVotes) * 100) : 0;
+                        return (
+                            <div key={option.id}>
+                                {voted ? (
+                                    <div className="w-full">
+                                        <div className="flex justify-between text-sm font-medium mb-1">
+                                            <span className="text-slate-800">{option.label}</span>
+                                            <span className="text-slate-500">{percentage}%</span>
+                                        </div>
+                                        <div className="w-full bg-slate-200 rounded-full h-2">
+                                            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${percentage}%` }}></div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <label className="flex items-center p-3 w-full rounded-md border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-300">
+                                        <input type="radio" name="poll" value={option.id} checked={selectedOption === option.id} onChange={() => setSelectedOption(option.id)} className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300" />
+                                        <span className="ml-3 text-sm font-medium text-slate-700">{option.label}</span>
+                                    </label>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
+                {!voted && (
+                    <button onClick={handleVote} disabled={!selectedOption} className="mt-4 w-full px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-semibold hover:bg-slate-900 transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed">
+                        Vote
+                    </button>
+                )}
+                 {voted && (
+                    <p className="text-center text-xs text-slate-500 mt-4">Total Votes: {totalVotes}</p>
+                )}
             </div>
+        </Card>
+    );
+};
 
-            {/* Carousel Section */}
-            <div className="bg-white relative py-16 sm:py-20">
-                <div 
-                    ref={scrollContainerRef}
-                    className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth px-4 sm:px-6 lg:px-8 pb-8 scrollbar-hide"
-                >
-                    {cardsWithIcons.map((card, index) => (
-                        <div key={index} className="snap-start">
-                            <ProductCard card={card} />
-                        </div>
-                    ))}
+
+// 5. Resource Hub
+const ResourceHub: React.FC = () => {
+  const resources = [
+    { name: 'Knowledge Base', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
+    { name: 'API Docs', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> },
+    { name: 'Support Tickets', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg> },
+    { name: 'Community Guidelines', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.6-3.752A11.959 11.959 0 0115.502 6a11.99 11.99 0 00-9-2.752z" /></svg> },
+  ];
+  return (
+    <Card>
+      <CardHeader title="Resource Hub" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>} />
+       <div className="p-5 grid grid-cols-2 gap-4">
+          {resources.map(resource => (
+              <a href="#" key={resource.name} className="flex flex-col items-center justify-center text-center p-4 bg-slate-50 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition-colors group">
+                  <div className="h-10 w-10 flex items-center justify-center text-slate-500 group-hover:text-blue-600 mb-2">
+                    {resource.icon}
+                  </div>
+                  <p className="text-sm font-semibold text-slate-700 group-hover:text-blue-800">{resource.name}</p>
+              </a>
+          ))}
+       </div>
+    </Card>
+  );
+};
+
+
+// --- Main Page Component ---
+const HomeV1: React.FC = () => {
+  return (
+    <div className="bg-slate-100 min-h-full">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-800">Community Dashboard</h1>
+          <p className="mt-1 text-slate-600">Welcome back! Here's a snapshot of what's happening today.</p>
+        </header>
+
+        {/* Main Content */}
+        <div className="space-y-8">
+            <QuickStats />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-8">
+                    <LiveActivityFeed />
+                    <InteractivePoll />
                 </div>
-
-                {/* Navigation */}
-                <div className="mt-8 flex justify-center items-center gap-8">
-                    {/* Left Arrow */}
-                    <button 
-                        onClick={() => handleNavClick('left')} 
-                        disabled={!canScrollLeft}
-                        className="p-3 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Previous slide"
-                    >
-                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
-                    
-                    {/* Pagination Dots */}
-                    <div className="flex items-center gap-2">
-                        {CARDS_DATA.map((_, index) => (
-                             <button 
-                                key={index}
-                                onClick={() => scrollToIndex(index)}
-                                className={`w-2.5 h-2.5 rounded-full transition-colors ${activeIndex === index ? 'bg-slate-800' : 'bg-slate-300 hover:bg-slate-400'}`}
-                                aria-label={`Go to slide ${index + 1}`}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Right Arrow */}
-                     <button 
-                        onClick={() => handleNavClick('right')} 
-                        disabled={!canScrollRight}
-                        className="p-3 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Next slide"
-                    >
-                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </button>
+                <div className="lg:col-span-1 space-y-8">
+                    <MemberSpotlight />
+                    <ResourceHub />
                 </div>
             </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default HomeV1;

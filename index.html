@@ -12,7 +12,7 @@
     "react/": "https://aistudiocdn.com/react@^18.3.1/",
     "react": "https://aistudiocdn.com/react@^18.3.1",
     "@headlessui/react": "https://esm.sh/@headlessui/react@2.1.0",
-    "@heroicons/react/24/outline": "https://esm.sh/@heroicons/react@2.1.4/24/outline",
+    "@heroicons/react/24/outline": "https://esm.sh/@heroicons/react@2.1.4/outline",
     "@heroicons/react/": "https://aistudiocdn.com/@heroicons/react@^2.2.0/"
   }
 }
@@ -28,6 +28,14 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  /* Marquee animation */
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
   }
 </style>
 </head>
