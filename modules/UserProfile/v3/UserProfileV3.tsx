@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import Spinner from '../../../../shared/ui/Spinner';
+import Spinner from '../../../shared/ui/Spinner';
 
 const FormInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => (
   <input
