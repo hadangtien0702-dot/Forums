@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, Suspense, lazy } from 'react';
 import Sidebar from './layout/Sidebar';
 import Spinner from './shared/ui/Spinner';
@@ -6,6 +7,9 @@ import Spinner from './shared/ui/Spinner';
 const HomePage = lazy(() => import('./modules/Home'));
 const AgeCalculatorPage = lazy(() => import('./modules/AgeCalculator'));
 const UserProfilePage = lazy(() => import('./modules/UserProfile'));
+const CommunityFeedPage = lazy(() => import('./modules/CommunityFeed'));
+const SalesHonorPage = lazy(() => import('./modules/SalesHonor'));
+const ImportantNoticePage = lazy(() => import('./modules/ImportantNotice'));
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
@@ -61,9 +65,12 @@ const App: React.FC = () => {
              {/* Container: removed for the full-width Home layouts */}
             <div className={isFullWidthHome ? 'h-full' : 'max-w-7xl mx-auto w-full'}>
                 <Suspense fallback={<SuspenseFallback />}>
-                  {currentPage === 'home' && <HomePage layout={homeLayout} setLayout={setHomeLayout} />}
+                  {currentPage === 'home' && <HomePage layout={homeLayout} setLayout={setHomeLayout} onNavigate={handleNavigate} />}
                   {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
                   {currentPage === 'userProfile' && <UserProfilePage />}
+                  {currentPage === 'communityFeed' && <CommunityFeedPage />}
+                  {currentPage === 'salesHonor' && <SalesHonorPage />}
+                  {currentPage === 'importantNotice' && <ImportantNoticePage />}
                 </Suspense>
             </div>
         </main>

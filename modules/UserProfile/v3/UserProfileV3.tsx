@@ -21,9 +21,9 @@ const InfoItem: React.FC<{ label: string; value: string; isEditing?: boolean; on
 
 
 const ColumnCard: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode }> = ({ title, icon, children }) => (
-    <div className="bg-slate-50/80 rounded-lg p-5">
+    <div className="bg-slate-50 rounded-xl p-5 border border-slate-200/80">
         <div className="flex items-center gap-3 mb-4">
-            <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center bg-white text-blue-600 rounded-full shadow-sm">
+            <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center bg-white text-blue-600 rounded-lg shadow-sm">
                 {icon}
             </div>
             <h3 className="font-bold text-slate-700">{title}</h3>
@@ -68,7 +68,7 @@ const UserProfileV3: React.FC<UserProfileV3Props> = ({ user, tempUser, isEditing
                 {!isEditing ? (
                     <button 
                         onClick={onEdit}
-                        className="mt-4 sm:mt-0 w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold cursor-pointer transition-all hover:bg-blue-700 active:scale-[0.98]"
+                        className="mt-4 sm:mt-0 w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold cursor-pointer transition-all hover:bg-blue-700 active:scale-[0.98] shadow-md shadow-blue-500/20"
                     >
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" />

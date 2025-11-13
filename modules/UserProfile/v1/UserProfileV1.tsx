@@ -181,7 +181,6 @@ const UserProfileV1: React.FC<UserProfileV1Props> = ({
                     isEditing={isEditing}
                     isSaving={isSaving}
                     showSuccess={showSuccess}
-                    // FIX: Pass the onEdit prop to satisfy the InformationSectionProps interface.
                     onEdit={onEdit}
                     onCancel={onCancel}
                     onSave={onSave}

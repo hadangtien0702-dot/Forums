@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 // --- Reusable UI Components ---
 
 const Card: React.FC<{ children: React.ReactNode; className?: string; }> = ({ children, className = '' }) => (
-  <div className={`bg-white rounded-xl shadow-md shadow-slate-200/60 border border-slate-200/80 ${className}`}>
+  <div className={`bg-white rounded-xl shadow-lg shadow-slate-200/80 ${className}`}>
     {children}
   </div>
 );
@@ -20,31 +20,92 @@ const CardHeader: React.FC<{ title: string; icon: React.ReactNode; action?: Reac
 
 // --- New Dashboard Sections ---
 
-// 1. Quick Stats
-const QuickStats: React.FC = () => {
-  const stats = [
-    { value: '1,204', label: 'Active Members', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.122-1.28-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.122-1.28.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg> },
-    { value: '82', label: 'New Posts Today', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> },
-    { value: '29', label: 'Open Topics', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> },
-  ];
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {stats.map(stat => (
-        <Card key={stat.label}>
-          <div className="flex items-center p-5">
-            <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-blue-100 text-blue-600 rounded-lg">
-              {stat.icon}
+// 1. Insurance Cases Carousel
+const InsuranceCasesCarousel: React.FC = () => {
+    const cases = useMemo(() => [
+        {
+            category: 'Life Insurance',
+            title: 'High-Net-Worth Client Solutions',
+            summary: 'Leverage whole life policies for tax-advantaged wealth transfer and estate planning.',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v.01M12 18v-2m0-2v-2m0-2v-2m0-2V7m0 11a9 9 0 110-18 9 9 0 010 18z" /></svg>
+        },
+        {
+            category: 'Business Planning',
+            title: 'Key Person Insurance for Startups',
+            summary: 'Protect your business from the financial loss of a critical team member. Essential for investor confidence.',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.182 0-6.134-.59-8.828-1.645M5.636 5.636a9 9 0 1012.728 0M12 12a3 3 0 100-6 3 3 0 000 6z" /></svg>
+        },
+        {
+            category: 'Retirement',
+            title: 'Fixed Indexed Annuity Strategies',
+            summary: 'Secure a reliable retirement income stream with protection from market downturns and potential for growth.',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+        },
+    ], []);
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const prev = () => setCurrentIndex(i => (i === 0 ? cases.length - 1 : i - 1));
+    const next = () => setCurrentIndex(i => (i === cases.length - 1 ? 0 : i + 1));
+    
+    const currentCase = cases[currentIndex];
+
+    return (
+        <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-xl shadow-blue-500/20 text-white overflow-hidden">
+            <div key={currentIndex} className="p-8 pb-16 sm:pb-8 relative z-10 animate-fade-in">
+                <div className="flex flex-col lg:flex-row items-center gap-6">
+                    <div className="flex-shrink-0 h-16 w-16 flex items-center justify-center bg-white/20 rounded-lg backdrop-blur-sm">
+                        {currentCase.icon}
+                    </div>
+                    <div className="text-center lg:text-left flex-grow">
+                        <p className="font-semibold text-blue-200">{currentCase.category}</p>
+                        <h2 className="text-xl lg:text-2xl font-bold mt-1">{currentCase.title}</h2>
+                        <p className="mt-2 text-blue-100 max-w-2xl text-sm md:text-base">{currentCase.summary}</p>
+                    </div>
+                     <div className="mt-4 lg:mt-0 lg:ml-auto flex-shrink-0">
+                        <a href="#" className="px-5 py-2.5 bg-white text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-50 transition-colors shadow-sm active:scale-[0.98]">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div className="ml-4">
-              <p className="text-2xl font-bold text-slate-800">{stat.value}</p>
-              <p className="text-sm font-medium text-slate-500">{stat.label}</p>
+
+            {/* Navigation Buttons for larger screens */}
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 z-20 hidden sm:flex items-center gap-2">
+                 <button onClick={prev} className="h-9 w-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-sm" aria-label="Previous case">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <button onClick={next} className="h-9 w-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-sm" aria-label="Next case">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </button>
             </div>
-          </div>
-        </Card>
-      ))}
-    </div>
-  );
+
+            {/* Navigation Dots for smaller screens */}
+            <div className="sm:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+                <div className="flex gap-2">
+                    {cases.map((_, index) => (
+                        <button key={index} onClick={() => setCurrentIndex(index)} className={`h-2 w-2 rounded-full transition-colors ${currentIndex === index ? 'bg-white' : 'bg-white/40 hover:bg-white/60'}`} aria-label={`Go to case ${index + 1}`}></button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden="true"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" aria-hidden="true"></div>
+            
+            <style>{`
+                @keyframes fade-in {
+                    0% { opacity: 0.5; transform: scale(0.98); }
+                    100% { opacity: 1; transform: scale(1); }
+                }
+                .animate-fade-in {
+                    animation: fade-in 0.5s ease-in-out;
+                }
+            `}</style>
+        </div>
+    );
 };
+
 
 // 2. Member Spotlight
 const MemberSpotlight: React.FC = () => {
@@ -64,7 +125,7 @@ const MemberSpotlight: React.FC = () => {
                 <p className="text-sm text-slate-500 mt-3 italic">{member.bio}</p>
             </div>
             <div className="p-5 mt-auto">
-                 <button className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
+                 <button className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors active:scale-[0.98] shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30">
                     View Profile
                 </button>
             </div>
@@ -154,7 +215,7 @@ const InteractivePoll: React.FC = () => {
                     })}
                 </div>
                 {!voted && (
-                    <button onClick={handleVote} disabled={!selectedOption} className="mt-4 w-full px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-semibold hover:bg-slate-900 transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed">
+                    <button onClick={handleVote} disabled={!selectedOption} className="mt-4 w-full px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-semibold hover:bg-slate-900 transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed active:scale-[0.99]">
                         Vote
                     </button>
                 )}
@@ -170,10 +231,10 @@ const InteractivePoll: React.FC = () => {
 // 5. Resource Hub
 const ResourceHub: React.FC = () => {
   const resources = [
-    { name: 'Knowledge Base', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
-    { name: 'API Docs', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> },
-    { name: 'Support Tickets', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg> },
-    { name: 'Community Guidelines', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.6-3.752A11.959 11.959 0 0115.502 6a11.99 11.99 0 00-9-2.752z" /></svg> },
+    { name: 'Knowledge Base', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
+    { name: 'API Docs', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> },
+    { name: 'Support Tickets', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg> },
+    { name: 'Community Guidelines', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.6-3.752A11.959 11.959 0 0115.502 6a11.99 11.99 0 00-9-2.752z" /></svg> },
   ];
   return (
     <Card>
@@ -206,7 +267,7 @@ const HomeV1: React.FC = () => {
 
         {/* Main Content */}
         <div className="space-y-8">
-            <QuickStats />
+            <InsuranceCasesCarousel />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
                     <LiveActivityFeed />

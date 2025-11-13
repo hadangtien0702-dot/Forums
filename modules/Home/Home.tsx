@@ -1,3 +1,4 @@
+
 import React, { lazy, Suspense, memo } from 'react';
 import Spinner from '../../shared/ui/Spinner';
 
@@ -25,9 +26,10 @@ const LayoutButton: React.FC<{
 interface HomePageProps {
   layout: string;
   setLayout: (layout: string) => void;
+  onNavigate: (page: string) => void;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ layout, setLayout }) => {
+const HomePage: React.FC<HomePageProps> = ({ layout, setLayout, onNavigate }) => {
     
   const SuspenseFallback: React.FC = () => (
     <div className="flex w-full items-center justify-center p-8">
@@ -63,7 +65,7 @@ const HomePage: React.FC<HomePageProps> = ({ layout, setLayout }) => {
 
       <Suspense fallback={<SuspenseFallback />}>
         {layout === 'v1' && <HomeV1 />}
-        {layout === 'v2' && <HomeV2 />}
+        {layout === 'v2' && <HomeV2 onNavigate={onNavigate} />}
         {layout === 'v3' && <HomeV3 />}
       </Suspense>
     </div>

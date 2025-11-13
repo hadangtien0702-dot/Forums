@@ -37,6 +37,37 @@
   .animate-marquee {
     animation: marquee 40s linear infinite;
   }
+
+  /* Animations for ImportantNotice Module */
+  @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeInDown-custom { animation: fadeInDown 0.8s ease forwards; }
+
+  @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeInUp-custom { animation: fadeInUp 0.8s ease forwards; }
+
+  @keyframes pulse-custom {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+  }
+  .animate-pulse-custom { animation: pulse-custom 2s infinite; }
+
+  @keyframes float-pin-grid {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+  }
+  .animate-float-pin-grid { animation: float-pin-grid 3s ease-in-out infinite; }
+
+  @keyframes float-pin-featured {
+      0%, 100% { transform: rotate(-15deg) translateY(0); }
+      50% { transform: rotate(-20deg) translateY(-8px); }
+  }
+  .animate-float-pin-featured { animation: float-pin-featured 3s ease-in-out infinite; }
 </style>
 </head>
   <body class="bg-slate-50">

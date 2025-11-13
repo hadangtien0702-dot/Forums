@@ -40,7 +40,7 @@ const AgeCalculatorForm: React.FC<AgeCalculatorFormProps> = ({
         <button
           onClick={onCalculate}
           disabled={isLoading}
-          className="w-full sm:w-auto flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-lg text-base font-semibold cursor-pointer transition-all hover:bg-blue-700 active:scale-[0.98] disabled:bg-slate-400 disabled:cursor-not-allowed disabled:transform-none"
+          className="w-full sm:w-auto flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-lg text-base font-semibold cursor-pointer transition-all hover:bg-blue-700 active:scale-[0.98] disabled:bg-slate-400 disabled:cursor-not-allowed disabled:transform-none shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30"
         >
           {isLoading ? <Spinner /> : 'Calculate'}
         </button>
