@@ -1,7 +1,8 @@
 
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import type { QuoteParams, Gender, HealthStatus, Program } from '../QuoteCalculator.types';
-import { faceAmounts } from '../data/termLifeData';
+import { faceAmounts as allFaceAmounts } from '../data/termLifeData';
 import Spinner from '../../../shared/ui/Spinner';
 import SegmentedControl from './SegmentedControl';
 
@@ -13,6 +14,38 @@ interface QuoteFormProps {
 }
 
 const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange, onSubmit }) => {
+    // Define validation rules based on current selections
+    let minAge = 20;
+    let maxAge = 70;
+    let currentFaceAmounts = allFaceAmounts;
+
+    const isTermMaleStbc = params.program === 'TERM' && params.gender === 'MALE' && params.healthStatus === 'STBC';
+    const isTermMaleEntbc1 = params.program === 'TERM' && params.gender === 'MALE' && params.healthStatus === 'ENTBC1';
+    const isTermFemaleEntbc1 = params.program === 'TERM' && params.gender === 'FEMALE' && params.healthStatus === 'ENTBC1';
+
+    if (params.program === 'IUL') {
+        minAge = 1;
+        maxAge = 65;
+    } else if (isTermMaleStbc) {
+        minAge = 30;
+        currentFaceAmounts = [100000, 300000, 500000];
+    } else if (isTermMaleEntbc1 || isTermFemaleEntbc1) {
+        minAge = 30;
+        maxAge = 54;
+        currentFaceAmounts = [100000, 300000, 500000];
+    }
+
+    // Effect to reset age/face amount if they become invalid after changing rules
+    useEffect(() => {
+        if (params.age !== null && (params.age < minAge || params.age > maxAge)) {
+            onParamChange('age', null);
+        }
+        if (params.faceAmount !== null && !currentFaceAmounts.includes(params.faceAmount)) {
+            onParamChange('faceAmount', null);
+        }
+    }, [params.program, params.gender, params.healthStatus]);
+
+
     return (
         <div className="space-y-6">
             <div>
@@ -37,8 +70,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange,
                         value={params.age || ''}
                         onChange={(e) => onParamChange('age', e.target.value ? Number(e.target.value) : null)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg text-base bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        min="20"
-                        max="70"
+                        min={minAge}
+                        max={maxAge}
                     />
                 </div>
                  <div>
@@ -78,7 +111,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange,
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-base bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                     <option value="">Select an amount</option>
-                    {faceAmounts.map(amount => (
+                    {currentFaceAmounts.map(amount => (
                         <option key={amount} value={amount}>
                             {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount)}
                         </option>
@@ -89,12 +122,11 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange,
             <div>
                 <button
                     onClick={onSubmit}
-                    disabled={isLoading || params.program === 'IUL'}
-                    className="w-full flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-lg text-base font-semibold cursor-pointer transition-all hover:bg-blue-700 active:scale-[0.98] disabled:bg-slate-400 disabled:cursor-not-allowed"
+                    disabled={isLoading}
+                    className="w-full flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-lg text-base font-semibold cursor-pointer transition-all duration-200 shadow-md shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/40 active:scale-[0.98] active:translate-y-0 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
                 >
                     {isLoading ? <Spinner /> : 'Get Quote'}
                 </button>
-                 {params.program === 'IUL' && <p className="text-xs text-center mt-2 text-slate-500">IUL program calculator is coming soon.</p>}
             </div>
         </div>
     );

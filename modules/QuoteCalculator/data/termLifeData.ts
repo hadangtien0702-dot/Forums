@@ -1,5 +1,7 @@
 import { femaleSntbcRates } from './femaleSntbcData';
 import { maleStbcRates } from './maleStbcData';
+import { femaleEntbc1Data } from './femaleEntbc1Data';
+import { maleEntbc1Rates } from './maleEntbc1Data';
 
 export const faceAmounts = [100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000, 500000, 750000, 1000000];
 const ages = Array.from({ length: 51 }, (_, i) => i + 20); // 20 to 70
@@ -28,11 +30,11 @@ type RateData = {
     }
 };
 
-const healthFactors = { 'SNTBC': 0, 'STBC': 15, 'ENTBC1': -2 };
+const healthFactors = { 'SNTBC': 0, 'STBC': 15 };
 const genderFactors = { 'MALE': 5, 'FEMALE': 0 };
 
 // Function to generate mock data for a specific gender/health combo
-const generateMockCategory = (gender: 'MALE' | 'FEMALE', health: 'SNTBC' | 'STBC' | 'ENTBC1') => {
+const generateMockCategory = (gender: 'MALE' | 'FEMALE', health: 'SNTBC' | 'STBC') => {
     const data: any = {};
     for (const age of ages) {
         data[age] = {};
@@ -54,8 +56,8 @@ const termLifeRates: RateData = {
         'FEMALE': generateMockCategory('FEMALE', 'STBC') // Mock data for now
     },
     'ENTBC1': {
-        'MALE': generateMockCategory('MALE', 'ENTBC1'), // Fallback to mock data
-        'FEMALE': generateMockCategory('FEMALE', 'ENTBC1') // Fallback to mock data
+        'MALE': maleEntbc1Rates,
+        'FEMALE': femaleEntbc1Data,
     }
 };
 

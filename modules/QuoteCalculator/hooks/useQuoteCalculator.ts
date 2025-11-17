@@ -1,7 +1,11 @@
 
+
+
 import { useState, useCallback } from 'react';
 import type { QuoteParams, QuoteResultsData, Gender, HealthStatus, Program } from '../QuoteCalculator.types';
 import { termLifeRates } from '../data/termLifeData';
+import { iulFemaleSntbcRatesPer100k } from '../data/iulRatesData';
+import { iulLinksByAge } from '../data/iulLinksData';
 
 export const useQuoteCalculator = () => {
     const [params, setParams] = useState<QuoteParams>({
@@ -31,25 +35,61 @@ export const useQuoteCalculator = () => {
                     throw new Error("Please fill in all fields.");
                 }
 
-                if (params.age < 20 || params.age > 70) {
-                    throw new Error("Age must be between 20 and 70.");
-                }
-
-                const ratesForAge = termLifeRates[params.healthStatus]?.[params.gender]?.[params.age]?.[params.faceAmount];
-                
-                if (!ratesForAge) {
-                    throw new Error("No quote available for the selected criteria. Please check the inputs.");
-                }
-
-                const calculatedResults = Object.entries(ratesForAge).map(([term, premium]) => ({
-                    term: Number(term),
-                    premium: premium,
-                }));
-                
-                setResults({
+                const quoteResultData: QuoteResultsData = {
                     params,
-                    results: calculatedResults,
-                });
+                    results: [],
+                };
+
+                if (params.program === 'TERM') {
+                    const ratesForAge = termLifeRates[params.healthStatus]?.[params.gender]?.[params.age]?.[params.faceAmount];
+                    
+                    if (!ratesForAge) {
+                        throw new Error("Chưa có dữ liệu cho các lựa chọn này.");
+                    }
+
+                    const filteredResults = Object.entries(ratesForAge)
+                        .filter(([, premium]) => premium !== undefined && premium !== null)
+                        .map(([term, premium]) => ({
+                            term: Number(term),
+                            premium: premium as number,
+                        }));
+                    
+                    if(filteredResults.length === 0) {
+                        throw new Error("Chưa có dữ liệu cho các lựa chọn này.");
+                    }
+                    quoteResultData.results = filteredResults;
+
+                } else if (params.program === 'IUL') {
+                    if (params.gender !== 'FEMALE' || params.healthStatus !== 'SNTBC') {
+                        throw new Error("IUL quotes are currently only available for Female / Standard Non Tobacco.");
+                    }
+                    if (params.age < 1 || params.age > 65) {
+                        throw new Error("For IUL, age must be between 1 and 65.");
+                    }
+    
+                    const baseRate = iulFemaleSntbcRatesPer100k[params.age];
+                    if (!baseRate) {
+                         throw new Error("No IUL rate available for the selected age.");
+                    }
+    
+                    const premium = baseRate * (params.faceAmount / 100000);
+    
+                    quoteResultData.results = [
+                        { term: 0, premium: parseFloat(premium.toFixed(2)) }, // term: 0 is a flag for IUL
+                    ];
+
+                    const links = iulLinksByAge[params.age];
+                    if (!links) {
+                        throw new Error("IUL resource links not found for the selected age.");
+                    }
+                    quoteResultData.pdfUrl = links.pdfUrl;
+                    quoteResultData.csvUrl = links.csvUrl;
+
+                } else {
+                     throw new Error("Selected program is not supported.");
+                }
+                
+                setResults(quoteResultData);
 
             } catch (e) {
                 if (e instanceof Error) {

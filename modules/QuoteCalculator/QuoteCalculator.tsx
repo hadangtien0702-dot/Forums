@@ -1,9 +1,10 @@
 
+
 import React, { useState, lazy, Suspense, memo } from 'react';
 import Spinner from '../../shared/ui/Spinner';
 
 const QuoteCalculatorV1 = lazy(() => import('./v1/QuoteCalculatorV1'));
-// const QuoteCalculatorV2 = lazy(() => import('./v2/QuoteCalculatorV2'));
+// const QuoteCalculatorV2 = lazy(() => import('./v2/QuoteCalculatorV2')); // Temporarily hidden
 // const QuoteCalculatorV3 = lazy(() => import('./v3/QuoteCalculatorV3'));
 
 const LayoutButton: React.FC<{
@@ -45,14 +46,13 @@ const QuoteCalculatorPage: React.FC = () => {
             <div className="mb-6 flex items-center flex-wrap gap-2 border-b border-slate-200 pb-4">
                 <span className="text-sm font-medium text-slate-600 mr-2">View Layout:</span>
                 <LayoutButton label="Version 1" isActive={layout === 'v1'} onClick={() => setLayout('v1')} />
-                <LayoutButton label="Version 2" isActive={layout === 'v2'} onClick={() => setLayout('v2')} />
+                {/* <LayoutButton label="Version 2" isActive={layout === 'v2'} onClick={() => setLayout('v2')} /> */}
                 <LayoutButton label="Version 3" isActive={layout === 'v3'} onClick={() => setLayout('v3')} />
             </div>
 
             <Suspense fallback={<SuspenseFallback />}>
                 {layout === 'v1' && <QuoteCalculatorV1 />}
-                {/* Add V2 and V3 when they are created */}
-                {layout === 'v2' && <div className="text-center p-8 bg-white rounded-xl">Version 2 is not yet available.</div>}
+                {/* {layout === 'v2' && <QuoteCalculatorV2 />} */}
                 {layout === 'v3' && <div className="text-center p-8 bg-white rounded-xl">Version 3 is not yet available.</div>}
             </Suspense>
         </div>
