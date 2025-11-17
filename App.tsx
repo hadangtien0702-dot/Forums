@@ -6,14 +6,17 @@ import Spinner from './shared/ui/Spinner';
 // Lazy load page components for code splitting
 const HomePage = lazy(() => import('./modules/Home'));
 const AgeCalculatorPage = lazy(() => import('./modules/AgeCalculator'));
+const QuoteCalculatorPage = lazy(() => import('./modules/QuoteCalculator'));
 const UserProfilePage = lazy(() => import('./modules/UserProfile'));
 const CommunityFeedPage = lazy(() => import('./modules/CommunityFeed'));
 const SalesHonorPage = lazy(() => import('./modules/SalesHonor'));
 const ImportantNoticePage = lazy(() => import('./modules/ImportantNotice'));
+const MenuPage = lazy(() => import('./modules/Menu'));
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
   const [homeLayout, setHomeLayout] = useState('v1'); // State for home layout
+  const [importantNoticeLayout, setImportantNoticeLayout] = useState('v1'); // State for important notice layout
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const handleNavigate = useCallback((page: string) => {
@@ -21,8 +24,10 @@ const App: React.FC = () => {
     setSidebarOpen(false); // Close sidebar on navigation
   }, []);
   
-  // Check if the current view is a full-width Home layout
-  const isFullWidthHome = currentPage === 'home' && (homeLayout === 'v1' || homeLayout === 'v2' || homeLayout === 'v3');
+  // Check if the current view is a full-width layout
+  const isFullWidthPage = (currentPage === 'home' && ['v1', 'v2', 'v3'].includes(homeLayout)) ||
+                        (currentPage === 'importantNotice' && ['v1', 'v2', 'v3'].includes(importantNoticeLayout));
+
 
   const SuspenseFallback: React.FC = () => (
     <div className="flex-1 flex items-center justify-center p-8">
@@ -60,17 +65,19 @@ const App: React.FC = () => {
                 </button>
             </div>
         </header>
-        {/* Main content area: padding is removed for the full-width Home layouts */}
-        <main className={`flex-1 flex flex-col ${isFullWidthHome ? '' : 'p-4 sm:p-6 lg:p-8'}`}>
-             {/* Container: removed for the full-width Home layouts */}
-            <div className={isFullWidthHome ? 'h-full' : 'max-w-7xl mx-auto w-full'}>
+        {/* Main content area: padding is removed for the full-width layouts */}
+        <main className={`flex-1 flex flex-col ${isFullWidthPage ? '' : 'p-4 sm:p-6 lg:p-8'}`}>
+             {/* Container: removed for the full-width layouts */}
+            <div className={isFullWidthPage ? 'h-full' : 'max-w-7xl mx-auto w-full'}>
                 <Suspense fallback={<SuspenseFallback />}>
                   {currentPage === 'home' && <HomePage layout={homeLayout} setLayout={setHomeLayout} onNavigate={handleNavigate} />}
                   {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
+                  {currentPage === 'quoteCalculator' && <QuoteCalculatorPage />}
                   {currentPage === 'userProfile' && <UserProfilePage />}
                   {currentPage === 'communityFeed' && <CommunityFeedPage />}
                   {currentPage === 'salesHonor' && <SalesHonorPage />}
-                  {currentPage === 'importantNotice' && <ImportantNoticePage />}
+                  {currentPage === 'importantNotice' && <ImportantNoticePage layout={importantNoticeLayout} setLayout={setImportantNoticeLayout} onNavigate={handleNavigate} />}
+                  {currentPage === 'menu' && <MenuPage />}
                 </Suspense>
             </div>
         </main>

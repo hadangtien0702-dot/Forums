@@ -1,71 +1,10 @@
 
+
 import React from 'react';
 import { Disclosure, Transition } from '@headlessui/react';
-import type { Notice, NoticePriority, NoticeAttachment } from '../ImportantNotice.data';
+import type { Notice, NoticePriority } from '../ImportantNotice.data';
+import { noticesV3 as notices } from './data';
 import { AttachmentItem } from '../components';
-
-const notices: Notice[] = [
-  {
-    id: 1,
-    priority: 'critical',
-    title: 'Thay đổi chính sách lãi suất bảo hiểm nhân thọ từ 15/11/2025',
-    date: '13/11/2025',
-    content: 'Kính gửi toàn thể nhân viên và đại lý bảo hiểm, Ban Lãnh Đạo thông báo về việc điều chỉnh lãi suất bảo hiểm nhân thọ có hiệu lực từ ngày 15/11/2025. Lãi suất mới sẽ tăng từ 4.5% lên 5.2% năm. Tất cả các hợp đồng mới sẽ áp dụng mức lãi suất này. Vui lòng cập nhật thông tin cho khách hàng và tham khảo tài liệu đính kèm để biết thêm chi tiết.',
-    attachments: [
-        { name: 'Policy_Change_Summary_Nov2025.pdf', type: 'PDF', size: '1.2 MB' },
-        { name: 'New_Interest_Rate_Chart.xlsx', type: 'XLSX', size: '450 KB' },
-    ],
-  },
-  {
-    id: 2,
-    priority: 'important',
-    title: 'Thay đổi thời gian khám bệnh định kỳ năm 2025',
-    date: '12/11/2025',
-    content: 'Công ty thông báo lịch khám sức khỏe định kỳ năm 2025 đã được thay đổi từ tháng 12 sang tháng 1/2026 để phù hợp hơn với lịch hoạt động cuối năm của công ty. Toàn bộ nhân viên vui lòng sắp xếp thời gian và đăng ký lịch khám chi tiết với phòng nhân sự trước ngày 30/11/2025.',
-    attachments: [
-        { name: 'Health_Checkup_Schedule_2025-2026.pdf', type: 'PDF', size: '800 KB' },
-    ],
-  },
-  {
-    id: 3,
-    priority: 'info',
-    title: 'Hướng dẫn sử dụng hệ thống quản lý bán hàng mới',
-    date: '10/11/2025',
-    content: 'Từ ngày 20/11/2025, công ty sẽ chính thức áp dụng hệ thống quản lý bán hàng mới với nhiều tính năng cải tiến. Hệ thống mới sẽ giúp tối ưu hóa quy trình bán hàng, quản lý khách hàng và báo cáo doanh thu. Vui lòng xem video hướng dẫn và tài liệu đính kèm để nắm rõ cách sử dụng.',
-     attachments: [
-        { name: 'Sales_System_User_Guide.pdf', type: 'PDF', size: '4.5 MB' },
-        { name: 'Walkthrough_Video_Link.docx', type: 'DOCX', size: '88 KB' },
-        { name: 'FAQ_Sheet.docx', type: 'DOCX', size: '200 KB' },
-    ],
-  },
-  {
-    id: 4,
-    priority: 'update',
-    title: 'Cập nhật chính sách làm việc từ xa (Remote Work)',
-    date: '08/11/2025',
-    content: 'Ban Lãnh Đạo thông báo cập nhật chính sách làm việc từ xa với quy định mới: nhân viên có thể làm remote 2 ngày/tuần thay vì 1 ngày/tuần như trước đây. Chính sách mới này sẽ có hiệu lực từ ngày 01/12/2025 và áp dụng cho tất cả các phòng ban đủ điều kiện. Vui lòng liên hệ phòng nhân sự để biết thêm chi tiết.',
-    attachments: [],
-  },
-    {
-    id: 5,
-    priority: 'critical',
-    title: 'Bảo trì hệ thống ngày 18/11/2025 - Ngừng hoạt động 4 giờ',
-    date: '07/11/2025',
-    content: 'Để nâng cấp và đảm bảo hiệu suất, hệ thống sẽ ngừng hoạt động từ 00:00 - 04:00 ngày 18/11/2025 để thực hiện bảo trì định kỳ. Vui lòng lưu lại công việc và đăng xuất khỏi hệ thống trước thời gian này để tránh mất dữ liệu.',
-    attachments: [
-        { name: 'Maintenance_Schedule_Details.pdf', type: 'PDF', size: '300 KB' },
-    ],
-  },
-  {
-    id: 6,
-    priority: 'info',
-    title: 'Lịch nghỉ Tết Nguyên Đán 2026',
-    date: '05/11/2025',
-    content: 'Công ty thông báo lịch nghỉ Tết Nguyên Đán 2026 từ ngày 26/01 đến 03/02/2026 (9 ngày). Nhân viên làm việc trong dịp Tết sẽ được hưởng lương x3 theo quy định của Luật Lao động. Chúc toàn thể nhân viên có một kỳ nghỉ lễ vui vẻ và ấm áp bên gia đình.',
-    attachments: [],
-  },
-];
-
 
 const icons: Record<NoticePriority, React.ReactNode> = {
   critical: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>,
@@ -88,8 +27,8 @@ const NoticeTimelineItem: React.FC<{ notice: Notice }> = ({ notice }) => {
     <Disclosure as="div" className="relative">
     {({ open }) => (
         <>
-            {/* Timeline event marker */}
-            <div className="absolute left-0 top-0 flex items-center justify-center w-8 h-8 bg-white rounded-full ring-4 ring-white" style={{ marginLeft: '-17px' }}>
+            {/* Timeline event marker - FIX: Centered the marker on the timeline correctly. */}
+            <div className="absolute left-4 top-0 flex items-center justify-center w-8 h-8 bg-white rounded-full ring-4 ring-white" style={{ transform: 'translateX(-50%)' }}>
                 <div className={`h-full w-full rounded-full flex items-center justify-center text-white ${styles.bg}`}>
                     {icons[notice.priority]}
                 </div>
@@ -137,18 +76,89 @@ const NoticeTimelineItem: React.FC<{ notice: Notice }> = ({ notice }) => {
   );
 };
 
-const ImportantNoticeV3: React.FC = () => {
-  return (
-    <div className="relative p-4">
-        {/* The timeline's vertical line */}
-        <div className="absolute left-4 top-0 h-full w-0.5 bg-slate-200"></div>
+const ActionButton: React.FC<{
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  isSpecial?: boolean;
+}> = ({ label, icon, onClick, isSpecial }) => {
+  const specialClasses = 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200';
+  const defaultClasses = 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200';
 
-        <div className="space-y-8">
-            {notices.map((notice) => (
-                <NoticeTimelineItem key={notice.id} notice={notice} />
-            ))}
+  return (
+    <button
+      onClick={onClick}
+      className={`flex flex-col items-center justify-center p-4 rounded-xl transition-colors duration-200 text-center border ${
+        isSpecial ? specialClasses : defaultClasses
+      }`}
+    >
+      <div className="mb-2 h-8 flex items-center justify-center">{icon}</div>
+      <span className="text-sm font-semibold">{label}</span>
+    </button>
+  );
+};
+
+
+const QuickActions: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
+  const actions = [
+    { page: 'ageCalculator', label: 'Age Calculator', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg> },
+    { page: 'communityFeed', label: 'New Thread', icon: <span className="text-4xl font-thin text-blue-700">+</span>, special: true },
+    { page: 'userProfile', label: 'My Profile', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
+    { page: 'salesHonor', label: 'Sales Honor', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg> },
+  ];
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg shadow-slate-200/80 p-5 sticky top-8">
+      <div className="flex items-center gap-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+        <h2 className="text-lg font-bold text-slate-800">Quick Actions</h2>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {actions.map(action => (
+          <ActionButton
+            key={action.page}
+            label={action.label}
+            icon={action.icon}
+            onClick={() => onNavigate(action.page)}
+            isSpecial={action.special}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+interface ImportantNoticeV3Props {
+  onNavigate: (page: string) => void;
+}
+
+const ImportantNoticeV3: React.FC<ImportantNoticeV3Props> = ({ onNavigate }) => {
+  return (
+    <div className="px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-800">Important Notices</h1>
+            <p className="mt-2 text-slate-600">
+                A timeline of all important company announcements.
+            </p>
         </div>
-        <style>{`.shadow-inner-soft { box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); }`}</style>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 relative">
+                {/* The timeline's vertical line */}
+                <div className="absolute left-4 top-0 h-full w-0.5 bg-slate-200"></div>
+                <div className="space-y-8">
+                    {notices.map((notice) => (
+                        <NoticeTimelineItem key={notice.id} notice={notice} />
+                    ))}
+                </div>
+            </div>
+            <aside className="lg:col-span-1">
+                <QuickActions onNavigate={onNavigate} />
+            </aside>
+            <style>{`.shadow-inner-soft { box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); }`}</style>
+        </div>
+      </div>
     </div>
   );
 };

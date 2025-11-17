@@ -103,7 +103,7 @@ const ImportantNoticeV1: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 -m-8 p-8 min-h-screen">
-      <div className="container mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="header animate-fadeInDown-custom">
           <h1>📢 Important Notices</h1>
           <p>Thông báo quan trọng từ Ban Lãnh Đạo</p>
