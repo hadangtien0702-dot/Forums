@@ -51,7 +51,7 @@ const Card: React.FC<{ title: string; onEdit?: () => void; isEditing?: boolean; 
 );
 
 
-const UserProfileV2 = (props: any) => {
+const UserProfileV2_obsolete = (props: any) => {
   const { user, tempUser, isEditing, isSaving, onEdit, onCancel, onSave, onInputChange } = props;
   const data = isEditing ? tempUser : user;
   
@@ -153,4 +153,4 @@ const UserProfileV2 = (props: any) => {
   );
 };
 
-export default UserProfileV2;
+export default UserProfileV2_obsolete;

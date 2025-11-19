@@ -139,10 +139,11 @@ const QuoteCalculatorV2: React.FC = () => {
 
                          <div>
                             <label className="block text-sm font-medium text-slate-300 mb-2">Health Status</label>
+                            {/* FIX: Corrected the `value` properties to match the `HealthStatus` type. */}
                             <DarkSegmentedControl<HealthStatus>
                                 value={params.healthStatus}
                                 onChange={(val) => handleParamChange('healthStatus', val)}
-                                options={[ { label: 'SNTBC', value: 'SNTBC' }, { label: 'STBC', value: 'STBC' }, { label: 'ENTBC1', value: 'ENTBC1' } ]}
+                                options={[ { label: 'SNTBC', value: 'NTBC' }, { label: 'STBC', value: 'TBC' }, { label: 'ENTBC1', value: 'EX1' } ]}
                             />
                         </div>
 

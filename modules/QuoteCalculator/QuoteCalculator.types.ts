@@ -1,7 +1,8 @@
 
 
+
 export type Gender = 'MALE' | 'FEMALE';
-export type HealthStatus = 'SNTBC' | 'STBC' | 'ENTBC1';
+export type HealthStatus = 'NTBC' | 'TBC' | 'EX1';
 export type Program = 'TERM' | 'IUL';
 
 export interface QuoteParams {
@@ -22,4 +23,14 @@ export interface QuoteResultsData {
   results: QuoteResult[];
   pdfUrl?: string;
   csvUrl?: string;
+}
+
+export interface IULRateTable {
+  [gender: string]: {
+    [healthStatus: string]: {
+      [age: number]: {
+        [faceAmount: number]: number; // premium
+      };
+    };
+  };
 }

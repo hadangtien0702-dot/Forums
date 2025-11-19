@@ -30,11 +30,11 @@ type RateData = {
     }
 };
 
-const healthFactors = { 'SNTBC': 0, 'STBC': 15 };
+const healthFactors = { 'NTBC': 0, 'TBC': 15 };
 const genderFactors = { 'MALE': 5, 'FEMALE': 0 };
 
 // Function to generate mock data for a specific gender/health combo
-const generateMockCategory = (gender: 'MALE' | 'FEMALE', health: 'SNTBC' | 'STBC') => {
+const generateMockCategory = (gender: 'MALE' | 'FEMALE', health: 'NTBC' | 'TBC') => {
     const data: any = {};
     for (const age of ages) {
         data[age] = {};
@@ -47,15 +47,15 @@ const generateMockCategory = (gender: 'MALE' | 'FEMALE', health: 'SNTBC' | 'STBC
 
 // Build the final rate structure, prioritizing real data over mock data.
 const termLifeRates: RateData = {
-    'SNTBC': {
+    'NTBC': {
         'FEMALE': femaleSntbcRates,
-        'MALE': generateMockCategory('MALE', 'SNTBC') // Mock data for now
+        'MALE': generateMockCategory('MALE', 'NTBC') // Mock data for now
     },
-    'STBC': {
+    'TBC': {
         'MALE': maleStbcRates,
-        'FEMALE': generateMockCategory('FEMALE', 'STBC') // Mock data for now
+        'FEMALE': generateMockCategory('FEMALE', 'TBC') // Mock data for now
     },
-    'ENTBC1': {
+    'EX1': {
         'MALE': maleEntbc1Rates,
         'FEMALE': femaleEntbc1Data,
     }

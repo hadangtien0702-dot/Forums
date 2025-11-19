@@ -1,17 +1,37 @@
 
 
 
+
 import { useState, useCallback } from 'react';
-import type { QuoteParams, QuoteResultsData, Gender, HealthStatus, Program } from '../QuoteCalculator.types';
+import type { QuoteParams, QuoteResultsData, IULRateTable } from '../QuoteCalculator.types';
 import { termLifeRates } from '../data/termLifeData';
-import { iulFemaleSntbcRatesPer100k } from '../data/iulRatesData';
-import { iulLinksByAge } from '../data/iulLinksData';
+import type { SyncedIULRate } from '../utils/csvParser';
+import { iulRateTableData as hardcodedIulRateTableData } from '../data/iulRateTableData';
+
+// Helper function for deep merging
+const isObject = (item: any) => (item && typeof item === 'object' && !Array.isArray(item));
+const mergeDeep = (target: any, source: any): any => {
+  const output = { ...target };
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target))
+          Object.assign(output, { [key]: source[key] });
+        else
+          output[key] = mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+  }
+  return output;
+}
 
 export const useQuoteCalculator = () => {
     const [params, setParams] = useState<QuoteParams>({
         age: 35,
-        gender: 'MALE',
-        healthStatus: 'SNTBC',
+        gender: 'FEMALE',
+        healthStatus: 'NTBC',
         faceAmount: 250000,
         program: 'TERM',
     });
@@ -31,9 +51,10 @@ export const useQuoteCalculator = () => {
         // Simulate API call
         setTimeout(() => {
             try {
-                if (!params.age || !params.faceAmount) {
-                    throw new Error("Please fill in all fields.");
+                if (params.age === null || params.faceAmount === null || params.age <= 0 || params.faceAmount <= 0) {
+                    throw new Error("Vui lòng nhập đầy đủ và hợp lệ các thông tin.");
                 }
+
 
                 const quoteResultData: QuoteResultsData = {
                     params,
@@ -60,30 +81,48 @@ export const useQuoteCalculator = () => {
                     quoteResultData.results = filteredResults;
 
                 } else if (params.program === 'IUL') {
-                    if (params.gender !== 'FEMALE' || params.healthStatus !== 'SNTBC') {
-                        throw new Error("IUL quotes are currently only available for Female / Standard Non Tobacco.");
-                    }
-                    if (params.age < 1 || params.age > 65) {
-                        throw new Error("For IUL, age must be between 1 and 65.");
-                    }
-    
-                    const baseRate = iulFemaleSntbcRatesPer100k[params.age];
-                    if (!baseRate) {
-                         throw new Error("No IUL rate available for the selected age.");
-                    }
-    
-                    const premium = baseRate * (params.faceAmount / 100000);
-    
-                    quoteResultData.results = [
-                        { term: 0, premium: parseFloat(premium.toFixed(2)) }, // term: 0 is a flag for IUL
-                    ];
+                    // 1. Prepare data by merging hardcoded data with user-uploaded data (localStorage)
+                    const rateTableDataString = localStorage.getItem('iulRateTableData');
+                    const localRateTable: IULRateTable = rateTableDataString ? JSON.parse(rateTableDataString) : {};
+                    const mergedRateTable = mergeDeep(hardcodedIulRateTableData, localRateTable);
 
-                    const links = iulLinksByAge[params.age];
-                    if (!links) {
-                        throw new Error("IUL resource links not found for the selected age.");
+                    // 2. Try to get premium from the merged rate table
+                    const premiumFromTable = mergedRateTable[params.gender]?.[params.healthStatus]?.[params.age]?.[params.faceAmount];
+
+                    if (premiumFromTable !== undefined && premiumFromTable !== null) {
+                        quoteResultData.results = [{ term: 0, premium: premiumFromTable }];
+                    } else {
+                        // 3. Fallback to flat list data if table lookup fails
+                        const syncedDataString = localStorage.getItem('syncedIULRates');
+                        if (syncedDataString) {
+                            const syncedRates: SyncedIULRate[] = JSON.parse(syncedDataString);
+                            const matchedRate = syncedRates.find(rate => 
+                                rate.age === params.age && 
+                                rate.gender === params.gender &&
+                                rate.healthStatus === params.healthStatus
+                            );
+                            if (matchedRate) {
+                                const premium = matchedRate.premium * (params.faceAmount / 100000);
+                                quoteResultData.results = [{ term: 0, premium: parseFloat(premium.toFixed(2)) }];
+                                quoteResultData.pdfUrl = matchedRate.pdfLink;
+                                quoteResultData.csvUrl = matchedRate.csvLink;
+                            }
+                        }
                     }
-                    quoteResultData.pdfUrl = links.pdfUrl;
-                    quoteResultData.csvUrl = links.csvUrl;
+                    
+                    // 4. Final check and error handling
+                    if (quoteResultData.results.length === 0) {
+                        // Check if we have data for the selection but the face amount is wrong
+                        const availableDataForSelection = mergedRateTable[params.gender]?.[params.healthStatus]?.[params.age];
+                        if (availableDataForSelection) {
+                            const availableFaceAmounts = Object.keys(availableDataForSelection).map(Number).sort((a,b) => a - b);
+                            if (availableFaceAmounts.length > 0) {
+                                throw new Error(`Mệnh giá không hợp lệ. Các mệnh giá có sẵn cho tuổi ${params.age}: ${availableFaceAmounts.map(fa => fa.toLocaleString()).join(', ')}`);
+                            }
+                        }
+                        // Generic error if no data source has the required info
+                        throw new Error(`Không có dữ liệu IUL cho ${params.age} tuổi, giới tính ${params.gender}, sức khỏe ${params.healthStatus}. Vui lòng kiểm tra lại file dữ liệu của bạn hoặc các lựa chọn.`);
+                    }
 
                 } else {
                      throw new Error("Selected program is not supported.");
@@ -100,7 +139,7 @@ export const useQuoteCalculator = () => {
             } finally {
                 setIsLoading(false);
             }
-        }, 1000); // Simulate network delay
+        }, 500);
     }, [params]);
 
     return {

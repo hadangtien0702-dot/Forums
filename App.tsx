@@ -12,6 +12,7 @@ const CommunityFeedPage = lazy(() => import('./modules/CommunityFeed'));
 const SalesHonorPage = lazy(() => import('./modules/SalesHonor'));
 const ImportantNoticePage = lazy(() => import('./modules/ImportantNotice'));
 const MenuPage = lazy(() => import('./modules/Menu'));
+const FooterPage = lazy(() => import('./modules/Footer')); // Import new module
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');

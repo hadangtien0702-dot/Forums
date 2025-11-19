@@ -59,7 +59,7 @@ const adaptUserToV1Details = (user: any): UserDetail[] => [
 ];
 
 
-const UserProfileV1 = (props: any) => {
+const UserProfileV1_obsolete = (props: any) => {
   const { user, tempUser, activeTab, setActiveTab, onInputChange, onEdit, isEditing } = props;
 
   const detailsForDisplay = adaptUserToV1Details(props.isEditing ? tempUser : user);
@@ -165,4 +165,4 @@ const UserProfileV1 = (props: any) => {
   );
 };
 
-export default UserProfileV1;
+export default UserProfileV1_obsolete;
