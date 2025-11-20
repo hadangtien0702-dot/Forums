@@ -12,6 +12,13 @@ import { iulFemaleNtbc300kLinks } from './iulFemaleNtbc300kLinks';
 import { iulFemaleNtbc325kLinks } from './iulFemaleNtbc325kLinks';
 import { iulFemaleNtbc350kLinks } from './iulFemaleNtbc350kLinks';
 import { iulFemaleNtbc375kLinks } from './iulFemaleNtbc375kLinks';
+import { iulFemaleNtbc400kLinks } from './iulFemaleNtbc400kLinks';
+import { iulFemaleNtbc425kLinks } from './iulFemaleNtbc425kLinks';
+import { iulFemaleNtbc450kLinks } from './iulFemaleNtbc450kLinks';
+import { iulFemaleNtbc475kLinks } from './iulFemaleNtbc475kLinks';
+import { iulFemaleNtbc500kLinks } from './iulFemaleNtbc500kLinks';
+import { iulFemaleNtbc525kLinks } from './iulFemaleNtbc525kLinks';
+import { iulFemaleNtbc550kLinks } from './iulFemaleNtbc550kLinks';
 
 // Central registry for all hardcoded IUL link datasets.
 // To add new data link files, simply import them here and add them to the array.
@@ -28,4 +35,11 @@ export const hardcodedIulLinks: SyncedIULRate[] = [
     ...iulFemaleNtbc325kLinks,
     ...iulFemaleNtbc350kLinks,
     ...iulFemaleNtbc375kLinks,
+    ...iulFemaleNtbc400kLinks,
+    ...iulFemaleNtbc425kLinks,
+    ...iulFemaleNtbc450kLinks,
+    ...iulFemaleNtbc475kLinks,
+    ...iulFemaleNtbc500kLinks,
+    ...iulFemaleNtbc525kLinks,
+    ...iulFemaleNtbc550kLinks,
 ];
