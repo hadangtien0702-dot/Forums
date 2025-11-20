@@ -1,35 +1,13 @@
-
-
-
 import React, { useState, useCallback } from 'react';
 import { parseIULCsv } from '../utils/csvParser';
 import Spinner from '../../../shared/ui/Spinner';
 import type { IULRateTable } from '../QuoteCalculator.types';
+import { mergeDeep } from '../utils/quoteLogic';
 
 interface DataSyncCardProps {
     onSyncSuccess: () => void;
     onSyncError: (message: string) => void;
 }
-
-// Simple deep merge for nested objects.
-const mergeDeep = (target: any, source: any): any => {
-  const output = { ...target };
-  if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(key => {
-      if (isObject(source[key])) {
-        if (!(key in target))
-          Object.assign(output, { [key]: source[key] });
-        else
-          output[key] = mergeDeep(target[key], source[key]);
-      } else {
-        Object.assign(output, { [key]: source[key] });
-      }
-    });
-  }
-  return output;
-}
-const isObject = (item: any) => (item && typeof item === 'object' && !Array.isArray(item));
-
 
 const DataSyncCard: React.FC<DataSyncCardProps> = ({ onSyncSuccess, onSyncError }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -61,10 +39,16 @@ const DataSyncCard: React.FC<DataSyncCardProps> = ({ onSyncSuccess, onSyncError 
                     let existingData = existingDataStr ? JSON.parse(existingDataStr) : {};
                     const mergedData = mergeDeep(existingData, newTableData);
                     localStorage.setItem('iulRateTableData', JSON.stringify(mergedData));
-                    console.log("Merged Rate Table Data:", mergedData);
 
                 } else { // type === 'list'
-                    localStorage.setItem('syncedIULRates', JSON.stringify(parsedResult.data));
+                    // For Link Mapping lists
+                    // We merge with existing synced rates to avoid overwriting
+                    const existingSyncedStr = localStorage.getItem('syncedIULRates');
+                    let existingSynced = existingSyncedStr ? JSON.parse(existingSyncedStr) : [];
+                    // Simple concat for now, logic could be improved to deduplicate
+                    const newData = parsedResult.data as any[];
+                    const mergedSynced = [...existingSynced, ...newData];
+                    localStorage.setItem('syncedIULRates', JSON.stringify(mergedSynced));
                 }
 
                 onSyncSuccess();
@@ -100,11 +84,15 @@ const DataSyncCard: React.FC<DataSyncCardProps> = ({ onSyncSuccess, onSyncError 
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
-                <h2 className="text-xl font-bold text-slate-800">Tải lên dữ liệu IUL</h2>
+                <h2 className="text-xl font-bold text-slate-800">Tải lên dữ liệu IUL hoặc Link Tài liệu</h2>
             </div>
-            <p className="text-slate-600 mb-4 text-sm">
-                Chọn một file CSV từ máy tính của bạn để tải lên dữ liệu phí bảo hiểm IUL. Dữ liệu sẽ được lưu trên trình duyệt.
-            </p>
+            <div className="text-slate-600 mb-4 text-sm space-y-2">
+                <p>Bạn có thể tải lên 2 loại file CSV:</p>
+                <ul className="list-disc list-inside pl-2 text-slate-500">
+                    <li><strong>Bảng Phí Bảo Hiểm:</strong> Dữ liệu dạng bảng để tính toán phí.</li>
+                    <li><strong>Danh Sách Link:</strong> Để gán link PDF/CSV. Format: <code>Age, Gender, HealthStatus, FaceAmount (hoặc Premium), PDF_Link, CSV_Link</code></li>
+                </ul>
+            </div>
             <div className="flex flex-col sm:flex-row items-stretch gap-3">
                  <div className="flex-grow">
                     <label htmlFor="csv-upload" className="w-full flex items-center justify-center px-6 py-3 bg-slate-100 text-slate-700 rounded-lg text-sm font-semibold transition-colors hover:bg-slate-200 cursor-pointer">

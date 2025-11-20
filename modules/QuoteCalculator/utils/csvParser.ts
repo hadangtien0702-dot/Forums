@@ -1,13 +1,12 @@
 
-
-
 import type { Gender, HealthStatus, IULRateTable } from '../QuoteCalculator.types';
 
 export interface SyncedIULRate {
   age: number;
   gender: Gender;
   healthStatus: HealthStatus;
-  premium: number; // This is the base premium for $100,000 face amount
+  premium?: number; // Optional, used if mapping premium directly
+  faceAmount?: number; // Optional, used if mapping links for a specific face amount
   pdfLink?: string;
   csvLink?: string;
 }
@@ -17,13 +16,19 @@ const validHealthStatuses: HealthStatus[] = ['NTBC', 'TBC', 'EX1'];
 
 /**
  * Parses a "flat list" CSV format.
- * Expected header: Age,Gender,HealthStatus,Premium,PDF_Link,CSV_Link
+ * Supports two main structures:
+ * 1. Standard Quote List: Age, Gender, HealthStatus, Premium, PDF_Link, CSV_Link
+ * 2. Link Map (Specific Face Amount): Age, Gender, HealthStatus, FaceAmount, PDF_Link, CSV_Link
  */
 const parseIULListCsv = (csvText: string): SyncedIULRate[] => {
   const lines = csvText.trim().replace(/\r\n/g, '\n').split('\n');
   if (lines.length < 2) {
     return [];
   }
+
+  // Determine column mapping based on header
+  const headerLine = lines[0].toUpperCase();
+  const isFaceAmountMap = headerLine.includes('FACEAMOUNT') || headerLine.includes('FACE AMOUNT');
 
   const rates: SyncedIULRate[] = [];
   // Start from line 1 to skip header
@@ -32,11 +37,12 @@ const parseIULListCsv = (csvText: string): SyncedIULRate[] => {
     if (!line) continue;
 
     try {
+      // Regex to split by comma, ignoring commas inside quotes
       const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
           .map(v => v.trim().replace(/^"|"$/g, '').trim());
 
-      if (values.length < 4) { // Only require the first 4 columns
-        console.warn(`Skipping malformed CSV line ${i + 1}: ${line}`);
+      if (values.length < 3) { 
+        // console.warn(`Skipping malformed CSV line ${i + 1}: ${line}`);
         continue;
       }
 
@@ -53,24 +59,48 @@ const parseIULListCsv = (csvText: string): SyncedIULRate[] => {
       } else if (healthStatusInput === 'ENTBC1' || healthStatusInput === 'EX1') {
           healthStatus = 'EX1';
       } else {
-          throw new Error(`Invalid health status: ${healthStatusInput}`);
+           // Fallback or skip, but for now lets try to match partial
+           if (healthStatusInput.includes('NON TOBACCO')) healthStatus = 'NTBC';
+           else if (healthStatusInput.includes('TOBACCO')) healthStatus = 'TBC';
+           else healthStatus = 'NTBC'; // Default
       }
       
-      const premiumString = values[3].replace(',', '.');
-      const premium = parseFloat(premiumString);
+      const val4 = values[3] ? values[3].replace(/,/g, '').replace('$', '') : '0';
+      const numericVal4 = parseFloat(val4);
+      
+      let premium = 0;
+      let faceAmount: number | undefined = undefined;
+
+      if (isFaceAmountMap) {
+          faceAmount = isNaN(numericVal4) ? undefined : numericVal4;
+      } else {
+          premium = isNaN(numericVal4) ? 0 : numericVal4;
+      }
+      
       const pdfLink = values[4] || undefined;
       const csvLink = values[5] || undefined;
 
       if (
         isNaN(age) || 
-        isNaN(premium) || 
-        !validGenders.includes(gender) || 
-        !validHealthStatuses.includes(healthStatus)
+        !validGenders.includes(gender)
       ) {
-          throw new Error(`Invalid data type or value in row ${i + 1}.`);
+         // console.warn(`Invalid data type in row ${i + 1}`);
+         continue; 
       }
       
-      rates.push({ age, gender, healthStatus, premium, pdfLink, csvLink });
+      // Only add if it has useful data
+      if (premium > 0 || faceAmount !== undefined || pdfLink || csvLink) {
+          rates.push({ 
+              age, 
+              gender, 
+              healthStatus, 
+              premium,
+              faceAmount,
+              pdfLink, 
+              csvLink 
+          });
+      }
+
     } catch (error) {
       console.warn(`Skipping invalid data in CSV line ${i + 1}: ${line}`, error);
     }
@@ -103,16 +133,15 @@ const parseIULRateTableCsv = (csvText: string): IULRateTable | null => {
   const gender: Gender | undefined = validGenders.find(g => g === genderStr);
 
   let healthStatus: HealthStatus | undefined;
-  if (healthStrRaw.includes('STANDARD NON TOBACCO') || healthStrRaw === 'NTBC') {
+  if (healthStrRaw.includes('STANDARD NON TOBACCO') || healthStrRaw === 'NTBC' || healthStrRaw.includes('SNTBC')) {
     healthStatus = 'NTBC';
   } else if (healthStrRaw.includes('TOBACCO') || healthStrRaw === 'TBC') {
     healthStatus = 'TBC';
-  } else if (healthStrRaw === 'EX1') {
+  } else if (healthStrRaw === 'EX1' || healthStrRaw.includes('EXPRESS')) {
     healthStatus = 'EX1';
   }
 
   if (!gender || !healthStatus) {
-      console.warn('Could not parse gender/health from CSV metadata:', metaLine);
       return null;
   }
   
@@ -154,18 +183,14 @@ const parseIULRateTableCsv = (csvText: string): IULRateTable | null => {
 };
 
 /**
- * Main dispatcher function. Tries to parse as a rate table first, then falls back to a flat list.
- * @param csvText The raw CSV string content.
- * @returns An object indicating the parsed data type and the data itself, or null if parsing fails.
+ * Main dispatcher function.
  */
 export const parseIULCsv = (csvText: string): { type: 'list' | 'table', data: SyncedIULRate[] | IULRateTable } | null => {
-    // Try parsing as rate table first, as it has a more specific format.
     const tableData = parseIULRateTableCsv(csvText);
     if (tableData) {
         return { type: 'table', data: tableData };
     }
 
-    // Fallback to list format
     const listData = parseIULListCsv(csvText);
     if (listData && listData.length > 0) {
         return { type: 'list', data: listData };

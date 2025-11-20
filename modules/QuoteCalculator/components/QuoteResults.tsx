@@ -1,6 +1,3 @@
-
-
-
 import React from 'react';
 import type { QuoteResultsData } from '../QuoteCalculator.types';
 
@@ -28,7 +25,7 @@ const FileIcon: React.FC<{ type: 'PDF' | 'CSV' }> = ({ type }) => {
     }
     // CSV Icon
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
         </svg>
     );
@@ -94,22 +91,26 @@ const QuoteResults: React.FC<QuoteResultsProps> = ({ data }) => {
                     ))}
                 </ul>
             </div>
-            {isIUL && pdfUrl && csvUrl && (
+            {isIUL && (pdfUrl || csvUrl) && (
               <div className="mt-6 pt-6 border-t border-slate-200">
                 <h3 className="text-base font-bold text-slate-800 mb-3">Tài liệu tham khảo</h3>
                 <div className="space-y-3">
-                  <DownloadItem
-                    title="Minh họa sản phẩm"
-                    subtitle="Tài liệu PDF"
-                    href={pdfUrl}
-                    type="PDF"
-                  />
-                  <DownloadItem
-                    title="Bảng chi tiết"
-                    subtitle="Tệp CSV"
-                    href={csvUrl}
-                    type="CSV"
-                  />
+                  {pdfUrl && (
+                      <DownloadItem
+                        title="Minh họa sản phẩm"
+                        subtitle={pdfUrl.includes('drive.google.com') ? "Google Drive Link" : "Tài liệu PDF"}
+                        href={pdfUrl}
+                        type="PDF"
+                      />
+                  )}
+                  {csvUrl && (
+                      <DownloadItem
+                        title="Bảng chi tiết"
+                        subtitle="Tệp CSV"
+                        href={csvUrl}
+                        type="CSV"
+                      />
+                  )}
                 </div>
               </div>
             )}

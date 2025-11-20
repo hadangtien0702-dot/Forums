@@ -1,38 +1,16 @@
-
-
-
-
 import React, { useEffect, useMemo } from 'react';
 import type { QuoteParams, Gender, HealthStatus, Program, IULRateTable } from '../QuoteCalculator.types';
 import { faceAmounts as allTermFaceAmounts } from '../data/termLifeData';
 import { iulRateTableData as hardcodedIulRateTableData } from '../data/iulRateTableData';
 import Spinner from '../../../shared/ui/Spinner';
 import SegmentedControl from './SegmentedControl';
+import { mergeDeep } from '../utils/quoteLogic';
 
 interface QuoteFormProps {
   params: QuoteParams;
   isLoading: boolean;
   onParamChange: (field: keyof QuoteParams, value: any) => void;
   onSubmit: () => void;
-}
-
-// Helper function for deep merging, needed to combine hardcoded and user-uploaded data.
-const isObject = (item: any) => (item && typeof item === 'object' && !Array.isArray(item));
-const mergeDeep = (target: any, source: any): any => {
-  const output = { ...target };
-  if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(key => {
-      if (isObject(source[key])) {
-        if (!(key in target))
-          Object.assign(output, { [key]: source[key] });
-        else
-          output[key] = mergeDeep(target[key], source[key]);
-      } else {
-        Object.assign(output, { [key]: source[key] });
-      }
-    });
-  }
-  return output;
 }
 
 const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange, onSubmit }) => {
@@ -43,7 +21,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange,
         const rateTableDataString = localStorage.getItem('iulRateTableData');
         const localRateTable: IULRateTable = rateTableDataString ? JSON.parse(rateTableDataString) : {};
         return mergeDeep(hardcodedIulRateTableData, localRateTable);
-    }, [params.program]); // Re-calculate only when program changes, as localStorage is external
+    }, [params.program]); // Re-calculate only when program changes
 
     // Determine available face amounts for IUL based on merged data
     const iulAvailableFaceAmounts = useMemo(() => {
