@@ -6,7 +6,12 @@ import { iulFemaleSntbcRatesPer100k } from './iulRatesData';
 // This allows us to easily support 125k, 150k, and other face amounts without massive hardcoded blocks.
 const generateTable = () => {
   // Defined face amounts to support in the calculator
-  const faceAmounts = [100000, 125000, 150000, 175000, 200000, 225000, 250000, 275000, 300000, 325000, 350000, 375000, 400000, 425000, 450000, 475000, 500000, 525000, 550000, 1000000];
+  const faceAmounts = [
+    100000, 125000, 150000, 175000, 200000, 225000, 250000, 275000, 
+    300000, 325000, 350000, 375000, 400000, 425000, 450000, 475000, 
+    500000, 525000, 550000, 575000, 600000, 625000, 650000, 675000, 
+    700000, 725000, 750000, 775000, 1000000
+  ];
   const table: any = {};
   
   for (const [ageStr, rate] of Object.entries(iulFemaleSntbcRatesPer100k)) {

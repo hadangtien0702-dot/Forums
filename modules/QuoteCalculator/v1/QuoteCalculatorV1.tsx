@@ -1,23 +1,12 @@
 
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { useQuoteCalculator } from '../hooks/useQuoteCalculator';
 import QuoteForm from '../components/QuoteForm';
 import QuoteResults from '../components/QuoteResults';
 import Spinner from '../../../shared/ui/Spinner';
-import DataSyncCard from '../components/DataSyncCard';
 
 const QuoteCalculatorV1: React.FC = () => {
     const { params, results, isLoading, error, handleParamChange, getQuote } = useQuoteCalculator();
-    const [syncStatus, setSyncStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
-
-    const handleSyncSuccess = useCallback(() => {
-        setSyncStatus({ type: 'success', message: 'Dữ liệu IUL đã được đồng bộ và lưu thành công!' });
-        setTimeout(() => setSyncStatus({ type: null, message: '' }), 5000);
-    }, []);
-
-    const handleSyncError = useCallback((message: string) => {
-        setSyncStatus({ type: 'error', message });
-    }, []);
 
     return (
         <div className="space-y-8">
@@ -57,18 +46,6 @@ const QuoteCalculatorV1: React.FC = () => {
                     )}
                     {!isLoading && !error && results && <QuoteResults data={results} />}
                 </div>
-            </div>
-            
-            {/* Data Sync Card and status message */}
-            <div>
-                 {syncStatus.type && (
-                    <div className={`mb-4 p-3 text-sm font-medium rounded-lg border ${
-                        syncStatus.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'
-                    }`}>
-                        {syncStatus.message}
-                    </div>
-                )}
-                <DataSyncCard onSyncSuccess={handleSyncSuccess} onSyncError={handleSyncError} />
             </div>
         </div>
     );

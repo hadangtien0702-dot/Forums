@@ -1,12 +1,11 @@
 
-
 import React, { useState } from 'react';
 import { useQuoteCalculator } from '../hooks/useQuoteCalculator';
-import type { Gender, HealthStatus, QuoteResultsData } from '../QuoteCalculator.types';
+import type { Gender, HealthStatus, QuoteResultsData, Program } from '../QuoteCalculator.types';
 import { faceAmounts } from '../data/termLifeData';
-import './QuoteCalculatorV2.css'; // New CSS file
+import './QuoteCalculatorV2.css';
 
-// Custom Slider component for this layout
+// Custom Slider component for Face Amount
 const CustomSlider: React.FC<{
   label: string;
   value: number;
@@ -17,10 +16,8 @@ const CustomSlider: React.FC<{
   formatValue: (value: number) => string;
 }> = ({ label, value, min, max, step, onChange, formatValue }) => (
   <div className="slider-container">
-    <div className="flex justify-between items-baseline mb-2">
-      <label className="text-sm font-normal text-slate-400">{label}</label>
-      <span className="text-2xl font-bold text-white tracking-tight">{formatValue(value)}</span>
-    </div>
+    <label className="form-label">{label}</label>
+    <div className="slider-value-display">{formatValue(value)}</div>
     <input
       type="range"
       min={min}
@@ -28,34 +25,35 @@ const CustomSlider: React.FC<{
       step={step}
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
-      className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer range-slider"
+      className="range-slider"
     />
+    <div className="flex justify-between mt-2 text-xs font-medium text-slate-400">
+         <span>Min</span>
+         <span>Max</span>
+    </div>
   </div>
 );
 
-
-// Re-styled SegmentedControl for dark theme
-const DarkSegmentedControl = <T extends string>({ options, value, onChange }: {
+// Light Mode Segmented Control
+function LightSegmentedControl<T extends string>({ options, value, onChange }: {
   options: { label: string; value: T }[];
   value: T;
   onChange: (value: T) => void;
-}) => (
-    <div className="flex bg-slate-900/50 p-1 rounded-lg">
-        {options.map(option => (
-            <button
-                key={option.value}
-                onClick={() => onChange(option.value)}
-                className={`flex-1 px-3 py-2 text-sm font-semibold rounded-md transition-all text-center relative ${
-                    value === option.value ? 'text-white' : 'text-slate-300 hover:bg-slate-700/50'
-                }`}
-            >
-                {value === option.value && <div className="absolute inset-0 bg-blue-600 rounded-md motion-safe:animate-fade-in z-0" />}
-                <span className="relative z-10">{option.label}</span>
-            </button>
-        ))}
-    </div>
-);
-
+}) {
+    return (
+        <div className="light-segmented-control">
+            {options.map(option => (
+                <button
+                    key={option.value}
+                    onClick={() => onChange(option.value)}
+                    className={`segment-btn ${value === option.value ? 'active' : ''}`}
+                >
+                    {option.label}
+                </button>
+            ))}
+        </div>
+    );
+}
 
 // Results Display
 const ResultsPanel: React.FC<{ data: QuoteResultsData }> = ({ data }) => {
@@ -73,10 +71,10 @@ const ResultsPanel: React.FC<{ data: QuoteResultsData }> = ({ data }) => {
                     onClick={() => setSelectedTerm(result.term)}
                     className={`result-item ${selectedTerm === result.term ? 'selected' : ''}`}
                 >
-                  {selectedTerm === result.term && <span className="selected-badge">Selected</span>}
+                  {selectedTerm === result.term && <span className="selected-badge">Recommended</span>}
                    <div className="flex-grow flex flex-col justify-center">
                       <span className="result-term">{data.params.program === 'IUL' ? 'Illustrative Premium' : `${result.term}-Year Term`}</span>
-                      <span className="result-label">Monthly Premium</span>
+                      <span className="result-label">Monthly Payment</span>
                   </div>
                   <span className="result-premium">{formatCurrency(result.premium)}</span>
                 </div>
@@ -95,9 +93,14 @@ const QuoteCalculatorV2: React.FC = () => {
 
     // Find the index of the current face amount for the slider
     const faceAmountIndex = faceAmounts.indexOf(params.faceAmount || 250000);
+    
+    // Determine limits based on program
+    const minAge = 1; 
+    const maxAge = 70;
 
     const handleFaceAmountSliderChange = (index: number) => {
-        handleParamChange('faceAmount', faceAmounts[index]);
+        const amount = faceAmounts[index] || 250000;
+        handleParamChange('faceAmount', amount);
     };
 
     return (
@@ -106,21 +109,48 @@ const QuoteCalculatorV2: React.FC = () => {
                 {/* Left Side - Form */}
                 <div className="form-panel">
                     <div className="space-y-8">
-                        <h2 className="text-3xl font-bold text-white">Premium Insurance Estimator</h2>
+                        <div className="flex items-center justify-between">
+                             <div>
+                                <h2 className="text-2xl font-bold text-slate-800">Quote Calculator</h2>
+                                <p className="text-sm text-slate-500 mt-1">Customize your plan</p>
+                             </div>
+                             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                             </div>
+                        </div>
                         
-                        <CustomSlider
-                            label="Client's Age"
-                            value={params.age || 35}
-                            min={20}
-                            max={70}
-                            step={1}
-                            onChange={(val) => handleParamChange('age', val)}
-                            formatValue={(val) => String(val)}
-                        />
+                         <div>
+                            <label className="form-label">Program Type</label>
+                            <LightSegmentedControl<Program>
+                                value={params.program}
+                                onChange={(val) => handleParamChange('program', val)}
+                                options={[ { label: 'Term-Life', value: 'TERM' }, { label: 'IUL', value: 'IUL' } ]}
+                            />
+                        </div>
 
+                        {/* AGE INPUT - CHANGED TO BOX */}
+                        <div>
+                            <label className="form-label">Client's Age</label>
+                            <div className="age-input-container">
+                                <input 
+                                    type="number" 
+                                    value={params.age || ''}
+                                    onChange={(e) => handleParamChange('age', parseInt(e.target.value))}
+                                    placeholder="0"
+                                    min={minAge}
+                                    max={maxAge}
+                                    className="age-input"
+                                />
+                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold pointer-events-none">Years Old</span>
+                            </div>
+                        </div>
+
+                        {/* FACE AMOUNT - KEPT AS SLIDER */}
                         <CustomSlider
                             label="Face Amount"
-                            value={faceAmountIndex}
+                            value={faceAmountIndex !== -1 ? faceAmountIndex : 2} 
                             min={0}
                             max={faceAmounts.length - 1}
                             step={1}
@@ -128,23 +158,24 @@ const QuoteCalculatorV2: React.FC = () => {
                             formatValue={() => formatCurrency(params.faceAmount || 0)}
                         />
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Gender</label>
-                            <DarkSegmentedControl<Gender>
-                                value={params.gender}
-                                onChange={(val) => handleParamChange('gender', val)}
-                                options={[ { label: 'Male', value: 'MALE' }, { label: 'Female', value: 'FEMALE' } ]}
-                            />
-                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="form-label">Gender</label>
+                                <LightSegmentedControl<Gender>
+                                    value={params.gender}
+                                    onChange={(val) => handleParamChange('gender', val)}
+                                    options={[ { label: 'Male', value: 'MALE' }, { label: 'Female', value: 'FEMALE' } ]}
+                                />
+                            </div>
 
-                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Health Status</label>
-                            {/* FIX: Corrected the `value` properties to match the `HealthStatus` type. */}
-                            <DarkSegmentedControl<HealthStatus>
-                                value={params.healthStatus}
-                                onChange={(val) => handleParamChange('healthStatus', val)}
-                                options={[ { label: 'SNTBC', value: 'NTBC' }, { label: 'STBC', value: 'TBC' }, { label: 'ENTBC1', value: 'EX1' } ]}
-                            />
+                             <div>
+                                <label className="form-label">Health</label>
+                                <LightSegmentedControl<HealthStatus>
+                                    value={params.healthStatus}
+                                    onChange={(val) => handleParamChange('healthStatus', val)}
+                                    options={[ { label: 'NTBC', value: 'NTBC' }, { label: 'TBC', value: 'TBC' }, { label: 'EX1', value: 'EX1' } ]}
+                                />
+                            </div>
                         </div>
 
                         <button onClick={getQuote} disabled={isLoading} className="get-quote-btn">
@@ -175,60 +206,71 @@ const QuoteCalculatorV2: React.FC = () => {
                     {!isLoading && error && (
                          <div className="results-placeholder">
                             <div className="text-center">
-                                 <div className="text-2xl mb-2">⚠️</div>
-                                 <p className="font-semibold text-white">Calculation Error</p>
-                                 <p className="text-sm text-slate-400 max-w-xs mx-auto">{error}</p>
+                                 <div className="text-4xl mb-4">⚠️</div>
+                                 <p className="font-bold text-slate-800 text-lg">Calculation Error</p>
+                                 <p className="text-sm text-slate-500 max-w-xs mx-auto mt-2">{error}</p>
                             </div>
                          </div>
                     )}
                     {!isLoading && !error && !results && (
                          <div className="results-placeholder">
                             <div className="text-center">
-                                <svg className="mx-auto h-12 w-12 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                                <p className="mt-4 font-semibold text-white">Your quote will appear here</p>
-                                <p className="text-sm text-slate-400">Fill out the form to get an estimate.</p>
+                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-slate-100 shadow-sm">
+                                     <svg className="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                </div>
+                                <p className="font-bold text-slate-700 text-lg">Ready to Calculate</p>
+                                <p className="text-sm text-slate-400 mt-1">Enter details to see the premium estimate.</p>
                             </div>
                          </div>
                     )}
                     {!isLoading && !error && results && (
-                         <div className="results-wrapper">
+                         <div className="results-wrapper fade-in-up">
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Calculation Results</h4>
+                                <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-md">Live Quote</span>
+                            </div>
+                            
                             <ResultsPanel data={results} />
                             
-                            {results.params.program === 'IUL' && (
+                            {results.params.program === 'IUL' && (results.pdfUrl || results.csvUrl) && (
                                 <div className="download-resources">
-                                    <h4 className="download-title">Downloadable Resources</h4>
-                                    <a href="#" onClick={(e) => e.preventDefault()} className="download-item">
-                                        <div className="download-icon-wrapper">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                        </div>
-                                        <div className="flex-grow min-w-0">
-                                            <p className="download-name">Product Brochure</p>
-                                            <p className="download-meta">PDF Document</p>
-                                        </div>
-                                        <div className="download-action-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                            </svg>
-                                        </div>
-                                    </a>
-                                    <a href="#" onClick={(e) => e.preventDefault()} className="download-item">
-                                        <div className="download-icon-wrapper">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                        </div>
-                                        <div className="flex-grow min-w-0">
-                                            <p className="download-name">Policy Illustration</p>
-                                            <p className="download-meta">PDF Document</p>
-                                        </div>
-                                        <div className="download-action-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                            </svg>
-                                        </div>
-                                    </a>
+                                    <h4 className="download-title">Available Documents</h4>
+                                    {results.pdfUrl && (
+                                        <a href={results.pdfUrl} target="_blank" rel="noopener noreferrer" className="download-item">
+                                            <div className="download-icon-wrapper">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-grow min-w-0">
+                                                <p className="download-name">Full Illustration</p>
+                                                <p className="download-meta">PDF Document • Download</p>
+                                            </div>
+                                            <div className="text-slate-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                </svg>
+                                            </div>
+                                        </a>
+                                    )}
+                                    {results.csvUrl && (
+                                        <a href={results.csvUrl} target="_blank" rel="noopener noreferrer" className="download-item">
+                                            <div className="download-icon-wrapper">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-grow min-w-0">
+                                                <p className="download-name">Rate Data</p>
+                                                <p className="download-meta">CSV Spreadsheet • Download</p>
+                                            </div>
+                                            <div className="text-slate-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                </svg>
+                                            </div>
+                                        </a>
+                                    )}
                                 </div>
                             )}
                         </div>

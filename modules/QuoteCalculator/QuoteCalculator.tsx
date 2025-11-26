@@ -1,59 +1,46 @@
 
-
-import React, { useState, lazy, Suspense, memo } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import Spinner from '../../shared/ui/Spinner';
 
 const QuoteCalculatorV1 = lazy(() => import('./v1/QuoteCalculatorV1'));
-// const QuoteCalculatorV2 = lazy(() => import('./v2/QuoteCalculatorV2')); // Temporarily hidden
-// const QuoteCalculatorV3 = lazy(() => import('./v3/QuoteCalculatorV3'));
-
-const LayoutButton: React.FC<{
-  label: string;
-  isActive: boolean;
-  onClick: () => void;
-}> = memo(({ label, isActive, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`px-3 py-1.5 text-sm font-semibold rounded-md transition-colors ${
-      isActive
-        ? 'bg-blue-600 text-white shadow-sm'
-        : 'text-slate-600 hover:bg-slate-200'
-    }`}
-  >
-    {label}
-  </button>
-));
-
+const QuoteCalculatorV2 = lazy(() => import('./v2/QuoteCalculatorV2'));
 
 const QuoteCalculatorPage: React.FC = () => {
-    const [layout, setLayout] = useState('v1');
+    const [version, setVersion] = useState<'v1' | 'v2'>('v2');
 
     const SuspenseFallback: React.FC = () => (
         <div className="flex w-full items-center justify-center p-8">
           <Spinner />
         </div>
-      );
+    );
 
     return (
         <div>
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-800">Insurance Quote Calculator</h1>
-                <p className="mt-2 text-slate-600">
-                  Quickly estimate insurance premiums for Term-Life and IUL programs.
-                </p>
+            <div className="mb-8 flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-800">Insurance Quote Calculator</h1>
+                    <p className="mt-2 text-slate-600">
+                    Quickly estimate insurance premiums for Term-Life and IUL programs.
+                    </p>
+                </div>
+                <div className="flex bg-slate-200 p-1 rounded-lg">
+                    <button 
+                        onClick={() => setVersion('v1')}
+                        className={`px-4 py-2 text-sm font-semibold rounded-md transition-all ${version === 'v1' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+                    >
+                        Classic
+                    </button>
+                    <button 
+                        onClick={() => setVersion('v2')}
+                        className={`px-4 py-2 text-sm font-semibold rounded-md transition-all ${version === 'v2' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+                    >
+                        Pro Dark
+                    </button>
+                </div>
             </div>
             
-            <div className="mb-6 flex items-center flex-wrap gap-2 border-b border-slate-200 pb-4">
-                <span className="text-sm font-medium text-slate-600 mr-2">View Layout:</span>
-                <LayoutButton label="Version 1" isActive={layout === 'v1'} onClick={() => setLayout('v1')} />
-                {/* <LayoutButton label="Version 2" isActive={layout === 'v2'} onClick={() => setLayout('v2')} /> */}
-                <LayoutButton label="Version 3" isActive={layout === 'v3'} onClick={() => setLayout('v3')} />
-            </div>
-
             <Suspense fallback={<SuspenseFallback />}>
-                {layout === 'v1' && <QuoteCalculatorV1 />}
-                {/* {layout === 'v2' && <QuoteCalculatorV2 />} */}
-                {layout === 'v3' && <div className="text-center p-8 bg-white rounded-xl">Version 3 is not yet available.</div>}
+                {version === 'v1' ? <QuoteCalculatorV1 /> : <QuoteCalculatorV2 />}
             </Suspense>
         </div>
     );

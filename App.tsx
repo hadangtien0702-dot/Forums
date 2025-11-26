@@ -16,8 +16,6 @@ const FooterPage = lazy(() => import('./modules/Footer')); // Import new module
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
-  const [homeLayout, setHomeLayout] = useState('v1'); // State for home layout
-  const [importantNoticeLayout, setImportantNoticeLayout] = useState('v1'); // State for important notice layout
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const handleNavigate = useCallback((page: string) => {
@@ -26,9 +24,8 @@ const App: React.FC = () => {
   }, []);
   
   // Check if the current view is a full-width layout
-  const isFullWidthPage = (currentPage === 'home' && ['v1', 'v2', 'v3'].includes(homeLayout)) ||
-                        (currentPage === 'importantNotice' && ['v1', 'v2', 'v3'].includes(importantNoticeLayout));
-
+  // Home V3 and Important Notice V2 are full-width.
+  const isFullWidthPage = (currentPage === 'home') || (currentPage === 'importantNotice');
 
   const SuspenseFallback: React.FC = () => (
     <div className="flex-1 flex items-center justify-center p-8">
@@ -71,13 +68,13 @@ const App: React.FC = () => {
              {/* Container: removed for the full-width layouts */}
             <div className={isFullWidthPage ? 'h-full' : 'max-w-7xl mx-auto w-full'}>
                 <Suspense fallback={<SuspenseFallback />}>
-                  {currentPage === 'home' && <HomePage layout={homeLayout} setLayout={setHomeLayout} onNavigate={handleNavigate} />}
+                  {currentPage === 'home' && <HomePage />}
                   {currentPage === 'ageCalculator' && <AgeCalculatorPage />}
                   {currentPage === 'quoteCalculator' && <QuoteCalculatorPage />}
                   {currentPage === 'userProfile' && <UserProfilePage />}
                   {currentPage === 'communityFeed' && <CommunityFeedPage />}
                   {currentPage === 'salesHonor' && <SalesHonorPage />}
-                  {currentPage === 'importantNotice' && <ImportantNoticePage layout={importantNoticeLayout} setLayout={setImportantNoticeLayout} onNavigate={handleNavigate} />}
+                  {currentPage === 'importantNotice' && <ImportantNoticePage />}
                   {currentPage === 'menu' && <MenuPage />}
                 </Suspense>
             </div>

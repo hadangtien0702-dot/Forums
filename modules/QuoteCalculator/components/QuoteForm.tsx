@@ -1,3 +1,4 @@
+
 import React, { useEffect, useMemo } from 'react';
 import type { QuoteParams, Gender, HealthStatus, Program, IULRateTable } from '../QuoteCalculator.types';
 import { faceAmounts as allTermFaceAmounts } from '../data/termLifeData';
@@ -54,13 +55,17 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange,
         currentTermFaceAmounts = [100000, 300000, 500000];
     }
 
-    // Effect to reset age/face amount if they become invalid after changing selections
+    // Effect to reset age if it becomes invalid due to CONSTRAINT changes (not user typing)
     useEffect(() => {
         if (params.age !== null && (params.age < minAge || params.age > maxAge)) {
             onParamChange('age', null);
         }
-        
-        // When selections change, if the current face amount is no longer valid, reset it.
+        // IMPORTANT: Do NOT include params.age here. We only want to re-validate if the RULES (min/max) change.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [minAge, maxAge, onParamChange]);
+    
+    // Effect to reset face amount if it becomes invalid due to constraint changes
+    useEffect(() => {
         const currentFaceAmount = params.faceAmount;
         if (currentFaceAmount !== null) {
             if (isIUL) {
@@ -73,7 +78,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ params, isLoading, onParamChange,
                 }
             }
         }
-    }, [params.program, params.gender, params.healthStatus, params.age, minAge, maxAge, onParamChange, isIUL, iulAvailableFaceAmounts, currentTermFaceAmounts]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isIUL, iulAvailableFaceAmounts, currentTermFaceAmounts, onParamChange]);
 
     const showIULDropdown = isIUL && iulAvailableFaceAmounts && iulAvailableFaceAmounts.length > 0;
 

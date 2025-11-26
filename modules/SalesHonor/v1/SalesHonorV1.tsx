@@ -106,10 +106,15 @@ const SalesHonorV1: React.FC = () => {
             </section>
             
             {/* Winner's Spotlight */}
-            {/* FIX: The type of `topPerformer` has optional `story` and `storyImage` properties. The conditional check is correct, but TypeScript's type narrowing doesn't apply to the whole object when passed as a prop. Passing a new object with explicitly defined properties that match the child component's required props resolves the type mismatch. */}
             {topPerformer.story && topPerformer.storyImage && (
               <section className="mb-12">
-                <SuccessStory member={{ name: topPerformer.name, story: topPerformer.story, storyImage: topPerformer.storyImage }} />
+                <SuccessStory 
+                  member={{ 
+                    name: topPerformer.name, 
+                    story: topPerformer.story, 
+                    storyImage: topPerformer.storyImage 
+                  }} 
+                />
               </section>
             )}
             

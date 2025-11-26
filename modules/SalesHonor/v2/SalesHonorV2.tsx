@@ -1,20 +1,34 @@
+
 import React from 'react';
 import { salesPerformersPodiumV2, otherPerformersV2 } from '../SalesHonor.data';
 import './SalesHonorV2.css';
 
+// Trend Icons
+const TrendUp = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    </svg>
+);
+
+const TrendDown = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+    </svg>
+);
+
+const TrendStable = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+    </svg>
+);
+
+
 const PodiumCard: React.FC<{ member: typeof salesPerformersPodiumV2[0] }> = ({ member }) => {
     return (
         <div className={`podium-card rank-${member.rank}`}>
-            {member.rank === 1 && (
-                <div className="fire-container">
-                    {[...Array(10)].map((_, i) => <div key={i} className="fire-particle"></div>)}
-                </div>
-            )}
             <div className="rank-badge">{member.rank}</div>
             <div className="avatar-container">
-                <div className="avatar avatar-placeholder" style={{ background: member.avatarGradient, color: 'white' }}>
-                    {member.initials}
-                </div>
+                <img src={member.avatar} alt={member.name} className="avatar" />
             </div>
             <div className="sales-name">{member.name}</div>
             <div className="title-badge" dangerouslySetInnerHTML={{ __html: member.title }}></div>
@@ -27,7 +41,7 @@ const PodiumCard: React.FC<{ member: typeof salesPerformersPodiumV2[0] }> = ({ m
                 </div>
                 <div className="stat-item">
                     <span>Growth</span>
-                    <span className="stat-value">{member.growth}</span>
+                    <span className="stat-value text-green-600">{member.growth}</span>
                 </div>
                 <div className="stat-item">
                     <span>Target</span>
@@ -38,18 +52,46 @@ const PodiumCard: React.FC<{ member: typeof salesPerformersPodiumV2[0] }> = ({ m
     );
 };
 
+const LeaderboardRow: React.FC<{ member: typeof otherPerformersV2[0] }> = ({ member }) => {
+    return (
+        <div className="leaderboard-row">
+            <div className="col-rank">
+                <span className="rank-number">#{member.rank}</span>
+                <div className="rank-trend">
+                    {member.trend === 'up' && <TrendUp />}
+                    {member.trend === 'down' && <TrendDown />}
+                    {member.trend === 'stable' && <TrendStable />}
+                </div>
+            </div>
+            
+            <div className="col-agent">
+                <img src={member.avatar} alt={member.name} className="agent-avatar" />
+                <div className="agent-info">
+                    <h4>{member.name}</h4>
+                    <p>{member.title}</p>
+                </div>
+            </div>
 
-const OtherPerformerCard: React.FC<{ member: typeof otherPerformersV2[0] }> = ({ member }) => (
-    <div className="other-card">
-        <div className="other-rank">{member.rank}</div>
-        <div className="other-avatar avatar-placeholder" style={{ background: 'linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%)', color: 'white', fontSize: '28px', fontWeight: 700 }}>
-            {member.initials}
+            <div className="col-volume">
+                <div className="volume-text">
+                    <span>Sales Volume</span>
+                    <span className="volume-value">{member.volume}</span>
+                </div>
+                <div className="progress-bg">
+                    <div className="progress-bar" style={{ width: `${member.quota}%` }}></div>
+                </div>
+            </div>
+            
+            <div className="col-action">
+                 <button className="action-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                 </button>
+            </div>
         </div>
-        <div className="other-name">{member.name}</div>
-        <div className="other-title">{member.title}</div>
-        <div className="other-sales">{member.sales}</div>
-    </div>
-);
+    )
+}
 
 const SalesHonorV2: React.FC = () => {
     const rank1 = salesPerformersPodiumV2.find(m => m.rank === 1);
@@ -61,8 +103,8 @@ const SalesHonorV2: React.FC = () => {
             <div className="container">
                 {/* Header */}
                 <div className="header">
-                    <h1>🏆 Top Sales Performers</h1>
-                    <p>Tháng 11, 2025 - Celebrating our champions</p>
+                    <h1>🏆 Champions League</h1>
+                    <p>Honoring the top performers of November 2025</p>
                 </div>
 
                 {/* Podium - Top 3 */}
@@ -72,12 +114,14 @@ const SalesHonorV2: React.FC = () => {
                     {rank3 && <PodiumCard member={rank3} />}
                 </div>
 
-                {/* Others Section */}
+                {/* Others Section (Leaderboard List) */}
                 <div className="others-section">
-                    <h2 className="others-title">Other Top Performers</h2>
-                    <div className="others-grid">
+                    <h2 className="others-title">
+                        Runner-Ups & Rising Stars
+                    </h2>
+                    <div className="leaderboard-list">
                         {otherPerformersV2.map(member => (
-                            <OtherPerformerCard key={member.rank} member={member} />
+                            <LeaderboardRow key={member.rank} member={member} />
                         ))}
                     </div>
                 </div>
