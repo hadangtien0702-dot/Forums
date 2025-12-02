@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "18.3.1",
-    "@headlessui/react": "2.1.0",
-    "@heroicons/react": "2.1.4",
-    "react-dom": "18.3.1"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@headlessui/react": "1.7.17",
+    "tailwindcss": "^4.1.17",
+    "next": "^16.0.6",
+    "@heroicons/react": "^2.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

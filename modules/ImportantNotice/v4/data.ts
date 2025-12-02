@@ -1,4 +1,6 @@
 
+import type { NoticeAttachment } from '../ImportantNotice.types';
+
 export interface NoticeV4 {
   id: string;
   priority: 'urgent' | 'important' | 'info' | 'update';
@@ -7,6 +9,7 @@ export interface NoticeV4 {
   tags: string[];
   fullDescription?: string;
   attachmentCount?: number;
+  attachments?: NoticeAttachment[];
   author: { avatar: string; name: string; role?: string };
   date: string;
   time?: string;
@@ -21,6 +24,10 @@ export const featuredNoticeV4: NoticeV4 = {
   tags: ['Chính sách', 'Lãi suất', 'Bảo hiểm nhân thọ'],
   fullDescription: 'Kính gửi toàn thể nhân viên và đại lý bảo hiểm, Ban Lãnh Đạo thông báo về việc điều chỉnh lãi suất bảo hiểm nhân thọ có hiệu lực từ ngày 15/11/2025. Lãi suất mới sẽ tăng từ 4.5% lên 5.2% năm, áp dụng cho tất cả các sản phẩm bảo hiểm nhân thọ. Vui lòng xem chi tiết trong file đính kèm và cập nhật thông tin cho khách hàng trong thời gian sớm nhất.',
   attachmentCount: 2,
+  attachments: [
+        { name: 'Policy_Change_Summary_Nov2025.pdf', type: 'PDF', size: '1.2 MB' },
+        { name: 'New_Interest_Rate_Chart.xlsx', type: 'XLSX', size: '450 KB' },
+  ],
   author: { avatar: 'CEO', name: 'Nguyễn Văn A', role: 'CEO - ThinkSmart Insurance' },
   date: '13/11/2025',
   time: '14:30',

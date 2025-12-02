@@ -1,4 +1,5 @@
-import React, { memo, useCallback } from 'react';
+
+import React, { useCallback } from 'react';
 import NavItem from './components/NavItem';
 import InformationSection from './views/Information';
 import SettingsSection from './views/Settings';
@@ -74,7 +75,7 @@ interface UserProfileV1Props {
 }
 
 
-const UserProfileV1: React.FC<UserProfileV1Props> = ({ 
+export default function UserProfileV1({ 
     user, 
     tempUser, 
     isEditing, 
@@ -86,10 +87,9 @@ const UserProfileV1: React.FC<UserProfileV1Props> = ({
     onInputChange,
     activeTab, 
     setActiveTab 
-}) => {
+}: UserProfileV1Props) {
   const detailsForDisplay = adaptUserToV1Details(isEditing ? tempUser : user);
 
-  // Adapter to map V1's flat key-value change to V2's structured change
   const handleV1InputChange = useCallback((key: string, value: string) => {
     if (key === 'name') {
       const [firstName, ...lastNameParts] = value.split(' ');
@@ -193,6 +193,4 @@ const UserProfileV1: React.FC<UserProfileV1Props> = ({
       </main>
     </div>
   );
-};
-
-export default memo(UserProfileV1);
+}

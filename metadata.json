@@ -1,5 +1,5 @@
 {
   "name": "Forums",
-  "description": "An age calculator for insurance agents, which calculates age based on the US insurance industry standard (age increases 6 months after the birthday).",
+  "description": "A comprehensive platform for insurance agents featuring tools for age calculation, quote estimation, community engagement, and sales recognition.",
   "requestFramePermissions": []
 }

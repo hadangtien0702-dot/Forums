@@ -1,9 +1,6 @@
-
-
 import React, { useState, useMemo, useCallback } from 'react';
 import { noticesV1 as noticesData, NoticeV1 } from './data';
 import NoticeDetailModal from './components/NoticeDetailModal';
-import './ImportantNoticeV1.css';
 
 type PriorityFilter = 'all' | 'urgent' | 'important' | 'info' | 'update';
 

@@ -1,4 +1,6 @@
 
+'use client';
+
 import React, { lazy, Suspense } from 'react';
 import Spinner from '../../shared/ui/Spinner';
 

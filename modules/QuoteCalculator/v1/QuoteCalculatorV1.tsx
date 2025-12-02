@@ -1,11 +1,13 @@
 
+'use client';
+
 import React from 'react';
 import { useQuoteCalculator } from '../hooks/useQuoteCalculator';
 import QuoteForm from '../components/QuoteForm';
 import QuoteResults from '../components/QuoteResults';
 import Spinner from '../../../shared/ui/Spinner';
 
-const QuoteCalculatorV1: React.FC = () => {
+export default function QuoteCalculatorV1() {
     const { params, results, isLoading, error, handleParamChange, getQuote } = useQuoteCalculator();
 
     return (
@@ -49,6 +51,4 @@ const QuoteCalculatorV1: React.FC = () => {
             </div>
         </div>
     );
-};
-
-export default QuoteCalculatorV1;
+}

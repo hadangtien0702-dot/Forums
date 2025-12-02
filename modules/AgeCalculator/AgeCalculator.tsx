@@ -1,3 +1,6 @@
+
+'use client';
+
 import React from 'react';
 import { useAgeCalculator } from './hooks/useAgeCalculator';
 import AgeCalculatorForm from './components/AgeCalculatorForm';
@@ -5,7 +8,7 @@ import ResultDisplay from './components/ResultDisplay';
 import LogTable from './components/LogTable';
 import Spinner from '../../shared/ui/Spinner';
 
-const AgeCalculatorPage: React.FC = () => {
+export default function AgeCalculatorPage() {
   const {
     dob,
     result,
@@ -63,6 +66,4 @@ const AgeCalculatorPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default AgeCalculatorPage;
+}

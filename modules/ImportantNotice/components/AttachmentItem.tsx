@@ -1,6 +1,6 @@
 
 import React from 'react';
-import type { NoticeAttachment } from '../ImportantNotice.data';
+import type { NoticeAttachment } from '../ImportantNotice.types';
 
 const FileIcon: React.FC<{ type: NoticeAttachment['type'] }> = ({ type }) => {
   switch (type) {

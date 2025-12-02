@@ -1,3 +1,6 @@
+
+'use client';
+
 import React, { useState, useCallback, memo, lazy, Suspense } from 'react';
 import Spinner from '../../shared/ui/Spinner';
 import { initialUser } from './UserProfile.constants';
@@ -122,7 +125,6 @@ const UserProfilePage: React.FC = () => {
             onCancel={handleCancel}
             onSave={handleSave}
             onInputChange={handleInputChange}
-            // FIX: Removed onProfileCardChange prop as it does not exist on UserProfileV3Props.
           />
         )}
       </Suspense>

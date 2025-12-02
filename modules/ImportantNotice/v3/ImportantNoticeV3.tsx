@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Disclosure, Transition } from '@headlessui/react';
-import type { Notice, NoticePriority } from '../ImportantNotice.data';
+import type { Notice, NoticePriority } from '../ImportantNotice.types';
 import { noticesV3 as notices } from './data';
 import { AttachmentItem } from '../components';
 
@@ -51,7 +51,7 @@ const NoticeTimelineItem: React.FC<{ notice: Notice }> = ({ notice }) => {
                     leaveTo="transform -translate-y-2 opacity-0"
                   >
                     <Disclosure.Panel className="mt-2 p-4 text-sm text-slate-600 bg-white rounded-xl shadow-inner-soft">
-                        <p className="leading-relaxed whitespace-pre-line">{notice.content}</p>
+                        <p className="leading-relaxed whitespace-pre-line">{notice.fullContent || notice.description}</p>
 
                         {notice.image && (
                             <div className="mt-4">

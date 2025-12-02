@@ -1,3 +1,4 @@
+
 import React, { memo } from 'react';
 import Spinner from '../../../shared/ui/Spinner';
 
@@ -46,7 +47,7 @@ interface UserProfileV3Props {
     onInputChange: (section: 'personalInfo' | 'address', key: string, value: string) => void;
 }
 
-const UserProfileV3: React.FC<UserProfileV3Props> = ({ user, tempUser, isEditing, isSaving, showSuccess, onEdit, onCancel, onSave, onInputChange }) => {
+export default function UserProfileV3({ user, tempUser, isEditing, isSaving, showSuccess, onEdit, onCancel, onSave, onInputChange }: UserProfileV3Props) {
     const data = isEditing ? tempUser : user;
 
     return (
@@ -150,6 +151,4 @@ const UserProfileV3: React.FC<UserProfileV3Props> = ({ user, tempUser, isEditing
             </div>
         </div>
     );
-};
-
-export default memo(UserProfileV3);
+}

@@ -2,86 +2,94 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Forums - Age Calculator</title>
+    <title>Forums - Insurance Agent Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"SF Pro"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+            },
+            colors: {
+              slate: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#475569',
+                700: '#334155',
+                800: '#1e293b',
+                900: '#0f172a',
+                950: '#020617',
+              },
+            },
+            animation: {
+              'float-pin-grid': 'float-pin-grid 3s ease-in-out infinite',
+              'float-pin-featured': 'float-pin-featured 3s ease-in-out infinite',
+              'pulse-custom': 'pulse-custom 2s infinite',
+              'fadeInDown-custom': 'fadeInDown 0.8s ease forwards',
+              'fadeInUp-custom': 'fadeInUp 0.8s ease forwards',
+              'shimmer': 'shimmer 1.5s infinite linear',
+              'fadeIn': 'fadeIn 0.4s ease-out forwards',
+            },
+            keyframes: {
+              'float-pin-grid': {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-5px)' },
+              },
+              'float-pin-featured': {
+                '0%, 100%': { transform: 'rotate(-15deg) translateY(0)' },
+                '50%': { transform: 'rotate(-20deg) translateY(-8px)' },
+              },
+              'pulse-custom': {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' },
+              },
+              fadeInDown: {
+                'from': { opacity: '0', transform: 'translateY(-30px)' },
+                'to': { opacity: '1', transform: 'translateY(0)' },
+              },
+              fadeInUp: {
+                'from': { opacity: '0', transform: 'translateY(40px)' },
+                'to': { opacity: '1', transform: 'translateY(0)' },
+              },
+              fadeIn: {
+                'from': { opacity: '0', transform: 'translateY(10px)' },
+                'to': { opacity: '1', transform: 'translateY(0)' },
+              },
+              shimmer: {
+                '0%': { backgroundPosition: '200% 0' },
+                '100%': { backgroundPosition: '-200% 0' }
+              }
+            },
+          }
+        }
+      }
+    </script>
+    <script type="importmap">
 {
   "imports": {
-    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1",
-    "react/": "https://esm.sh/react@18.3.1/",
-    "react": "https://esm.sh/react@18.3.1",
-    "@headlessui/react": "https://esm.sh/@headlessui/react@2.1.0?deps=react@18.3.1",
-    "@heroicons/react/24/outline": "https://esm.sh/@heroicons/react@2.1.4/24/outline?deps=react@18.3.1",
-    "@heroicons/react/": "https://esm.sh/@heroicons/react@2.1.4/?deps=react@18.3.1",
-    "react-dom/": "https://esm.sh/react-dom@18.3.1/?deps=react@18.3.1"
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+    "@heroicons/react/24/outline": "https://esm.sh/@heroicons/react@2.0.18/24/outline",
+    "@headlessui/react": "https://esm.sh/@headlessui/react@1.7.17?external=react,react-dom",
+    "tailwindcss": "https://aistudiocdn.com/tailwindcss@^4.1.17",
+    "next": "https://aistudiocdn.com/next@^16.0.6",
+    "@heroicons/react/": "https://aistudiocdn.com/@heroicons/react@^2.2.0/"
   }
 }
 </script>
-<style>
-  body {
-    font-family: "SF Pro", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-  }
-  /* Hide number input spinners */
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-  /* Custom utility to hide scrollbars */
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  /* Marquee animation */
-  @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-  }
-  .animate-marquee {
-    animation: marquee 40s linear infinite;
-  }
-
-  /* Animations for ImportantNotice Module */
-  @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-fadeInDown-custom { animation: fadeInDown 0.8s ease forwards; }
-
-  @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-fadeInUp-custom { animation: fadeInUp 0.8s ease forwards; }
-
-  @keyframes pulse-custom {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-  }
-  .animate-pulse-custom { animation: pulse-custom 2s infinite; }
-
-  @keyframes float-pin-grid {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-  }
-  .animate-float-pin-grid { animation: float-pin-grid 3s ease-in-out infinite; }
-
-  @keyframes float-pin-featured {
-      0%, 100% { transform: rotate(-15deg) translateY(0); }
-      50% { transform: rotate(-20deg) translateY(-8px); }
-  }
-  .animate-float-pin-featured { animation: float-pin-featured 3s ease-in-out infinite; }
-</style>
-</head>
-  <body class="bg-slate-50">
+  </head>
+  <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

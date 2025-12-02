@@ -1,9 +1,5 @@
 
-export interface NoticeAttachment {
-  name: string;
-  type: 'PDF' | 'DOCX' | 'XLSX' | 'IMAGE';
-  size: string;
-}
+import type { NoticeAttachment } from '../ImportantNotice.types';
 
 export interface NoticeAuthor {
   avatar: string; // initials
