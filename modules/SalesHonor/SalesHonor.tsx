@@ -28,15 +28,15 @@ const SalesHonorPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-20 relative overflow-hidden">
             
-            {/* Decorative Background Blobs */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-100/50 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] bg-purple-100/40 rounded-full blur-[100px] pointer-events-none animate-pulse-custom" />
+            {/* Decorative Background Blobs - Toned Down */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-slate-200/40 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] bg-indigo-100/30 rounded-full blur-[100px] pointer-events-none animate-pulse-custom" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 relative z-10">
                 
                 {/* Header Section */}
                 <div className="text-center mb-12 animate-fadeInDown-custom">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 border border-yellow-200 text-[10px] font-black uppercase tracking-widest mb-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-black uppercase tracking-widest mb-4">
                         <span>🏆</span> Hall of Fame
                     </div>
                     <h1 className="text-4xl sm:text-6xl font-black text-slate-900 mb-4 tracking-tight">

@@ -1,22 +1,12 @@
 
 'use client';
 
-import React, { lazy, Suspense, useState, useCallback } from 'react';
-import Spinner from '../../shared/ui/Spinner';
+import React, { useState, useCallback } from 'react';
+import QuoteCalculatorV2 from './v2/QuoteCalculatorV2';
 import DataSyncCard from './components/DataSyncCard';
 
-const QuoteCalculatorV1 = lazy(() => import('./v1/QuoteCalculatorV1'));
-const QuoteCalculatorV2 = lazy(() => import('./v2/QuoteCalculatorV2'));
-
 const QuoteCalculatorPage: React.FC = () => {
-    const [version, setVersion] = useState<'v1' | 'v2'>('v2');
     const [showDataSync, setShowDataSync] = useState(false);
-
-    const SuspenseFallback: React.FC = () => (
-        <div className="flex w-full items-center justify-center p-8">
-          <Spinner />
-        </div>
-    );
 
     const handleSyncSuccess = useCallback(() => {
         alert('Dữ liệu đã được cập nhật thành công!');
@@ -46,20 +36,6 @@ const QuoteCalculatorPage: React.FC = () => {
                         </svg>
                         {showDataSync ? 'Hide Data' : 'Manage Data'}
                     </button>
-                    <div className="flex bg-slate-200 p-1 rounded-lg">
-                        <button 
-                            onClick={() => setVersion('v1')}
-                            className={`px-4 py-2 text-sm font-semibold rounded-md transition-all ${version === 'v1' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
-                        >
-                            Classic
-                        </button>
-                        <button 
-                            onClick={() => setVersion('v2')}
-                            className={`px-4 py-2 text-sm font-semibold rounded-md transition-all ${version === 'v2' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
-                        >
-                            Pro Dark
-                        </button>
-                    </div>
                 </div>
             </div>
             
@@ -69,9 +45,7 @@ const QuoteCalculatorPage: React.FC = () => {
                 </div>
             )}
 
-            <Suspense fallback={<SuspenseFallback />}>
-                {version === 'v1' ? <QuoteCalculatorV1 /> : <QuoteCalculatorV2 />}
-            </Suspense>
+            <QuoteCalculatorV2 />
         </div>
     );
 };
