@@ -7,6 +7,8 @@ interface QuickStatsProps {
 }
 
 const QuickStats: React.FC<QuickStatsProps> = ({ notices }) => {
+    if (!notices) return null;
+    
     const urgentCount = notices.filter(n => n.priority === 'critical').length;
     const newCount = notices.filter(n => n.isNew).length;
 

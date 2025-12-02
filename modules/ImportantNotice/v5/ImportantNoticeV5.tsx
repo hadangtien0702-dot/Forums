@@ -1,4 +1,6 @@
 
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { noticesData } from '../ImportantNotice.data';
 import type { Notice } from '../ImportantNotice.types';
@@ -38,19 +40,19 @@ export default function ImportantNoticeV5() {
             const matchesFilter = filter === 'All' ? true : notice.priority === filter;
             
             // Exclude the featured notice from the grid only if showing All and no search
-            if (search === '' && filter === 'All' && notice.id === featuredNotice.id) return false;
+            if (featuredNotice && search === '' && filter === 'All' && notice.id === featuredNotice.id) return false;
 
             return matchesSearch && matchesFilter;
         });
     }, [search, filter, featuredNotice]);
 
-    const showHero = search === '' && filter === 'All';
+    const showHero = search === '' && filter === 'All' && featuredNotice;
 
     return (
-        <div className="bg-slate-50 -m-4 sm:-m-6 lg:-m-8 min-h-screen pb-20">
-            {/* Header */}
-            <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-6 py-4 shadow-sm transition-all">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="min-h-full pb-20 space-y-6">
+            {/* Header Section */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm sticky top-0 z-20">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-black text-slate-900 tracking-tight">Notice Board</h1>
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Company Updates</p>
@@ -67,18 +69,18 @@ export default function ImportantNoticeV5() {
                             placeholder="Search notices..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="block w-full pl-11 pr-4 py-3 border-0 bg-slate-100 rounded-2xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium shadow-inner"
+                            className="block w-full pl-11 pr-4 py-3 border-0 bg-slate-100 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                         />
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 pt-8">
+            <div className="space-y-8">
                 <QuickStats notices={noticesData} />
 
                 {/* Filters */}
-                <div className="flex flex-wrap items-center gap-3 mb-10">
-                    <span className="text-sm font-bold text-slate-400 mr-2 uppercase tracking-wider">Filter:</span>
+                <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-sm font-bold text-slate-400 mr-2 uppercase tracking-wider hidden sm:inline-block">Filter:</span>
                     <FilterChip label="All" isActive={filter === 'All'} onClick={() => setFilter('All')} />
                     <FilterChip label="Critical" isActive={filter === 'critical'} onClick={() => setFilter('critical')} />
                     <FilterChip label="Important" isActive={filter === 'important'} onClick={() => setFilter('important')} />
@@ -109,7 +111,7 @@ export default function ImportantNoticeV5() {
                     </div>
 
                     {filteredNotices.length === 0 && (
-                        <div className="text-center py-24">
+                        <div className="text-center py-24 bg-white rounded-3xl border border-slate-100 shadow-sm mt-6">
                              <div className="mx-auto h-16 w-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-4 text-2xl">
                                 🔍
                              </div>

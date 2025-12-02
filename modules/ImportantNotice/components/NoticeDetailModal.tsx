@@ -2,7 +2,7 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import type { Notice } from '../ImportantNotice.types';
-import { AttachmentItem } from '../../components';
+import { AttachmentItem } from './AttachmentItem';
 
 const PRIORITY_STYLES = {
     critical: { label: 'Critical', bg: 'bg-red-100', text: 'text-red-700', icon: '🔴' },
@@ -24,7 +24,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({ isOpen, onClose, 
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-[100]" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -34,7 +34,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({ isOpen, onClose, 
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -65,7 +65,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({ isOpen, onClose, 
                     </button>
                 </div>
                 
-                <div className="p-6 sm:p-8">
+                <div className="p-6 sm:p-8 max-h-[70vh] overflow-y-auto">
                     {/* Meta Info */}
                     <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
@@ -101,7 +101,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({ isOpen, onClose, 
                     )}
                 </div>
 
-                <div className="bg-slate-50 px-6 py-4 flex justify-end">
+                <div className="bg-slate-50 px-6 py-4 flex justify-end border-t border-slate-100">
                   <button
                     type="button"
                     className="inline-flex justify-center rounded-xl border border-transparent bg-slate-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-all shadow-lg shadow-slate-200"
